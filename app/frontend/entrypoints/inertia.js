@@ -1,3 +1,7 @@
+import '@unocss/reset/tailwind.css'
+import 'virtual:uno.css'
+import '~/assets/global.css'
+
 import { createInertiaApp } from '@inertiajs/svelte'
 
 createInertiaApp({
