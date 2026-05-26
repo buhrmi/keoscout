@@ -60,3 +60,5 @@ end
 gem "inertia_rails", "~> 3.21"
 
 gem "vite_rails", "~> 3.11"
+
+gem "omniauth-zalo", "~> 0.1.5"

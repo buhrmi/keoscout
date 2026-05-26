@@ -1,19 +1,17 @@
 import '@unocss/reset/tailwind.css'
 import 'virtual:uno.css'
 import '~/assets/global.css'
+import Default from "../layouts/default.svelte"
 
-import { createInertiaApp } from '@inertiajs/svelte'
+import { createInertiaApp, router } from '@inertiajs/svelte'
 
 createInertiaApp({
   pages: "../pages",
+  layout: Default,
+})
 
-  defaults: {
-    form: {
-      forceIndicesArrayFormatInFormData: false,
-      withAllErrors: true,
-    },
-    visitOptions: () => {
-      return { queryStringArrayFormat: "brackets" }
-    },
-  },
+window.addEventListener('message', function(event) {
+  if (event.data == 'session-created') {
+    router.reload()
+  }
 })
