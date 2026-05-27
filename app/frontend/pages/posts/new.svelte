@@ -1,3 +1,7 @@
+<script>
+  import { inertia } from '@inertiajs/svelte'
+</script>
+
 <main class="text-center">
   <img class="w-1/2 max-w-80 mx-auto pt-20 mb-4" src="~/assets/logo-gold.png" alt="Keo logo"/>
   <p>
@@ -7,5 +11,5 @@
     + Upload your first photo
   </a><br>
   or
-  <a href="">go to dashboard</a>
+  <a use:inertia href="/dashboard" >go to dashboard</a>
 </main>

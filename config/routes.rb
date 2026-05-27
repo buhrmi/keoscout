@@ -6,6 +6,11 @@ Rails.application.routes.draw do
 
   resource :session
 
+  namespace :dashboard do
+    resource :user
+    root "users#show"
+  end
+
   get "upload" => "posts#new"
   get "up" => "rails/health#show", as: :rails_health_check
 
