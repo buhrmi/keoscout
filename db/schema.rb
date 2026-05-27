@@ -54,6 +54,7 @@ ActiveRecord::Schema[8.1].define(version: 2026_05_27_024747) do
     t.integer "earnings", default: 0
     t.string "email"
     t.string "locale", default: "en"
+    t.string "name"
     t.string "password_digest"
     t.integer "scout_id"
     t.integer "talents_count", default: 0

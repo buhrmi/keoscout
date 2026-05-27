@@ -4,6 +4,12 @@ class ApplicationController < ActionController::Base
   before_action :set_current_user
   before_action :redirect_authenticated_user
 
+  inertia_share do
+    {
+      current_user: Current.user&.slice(:id, :name, :email)
+    }
+  end
+
   private
 
   def set_current_user

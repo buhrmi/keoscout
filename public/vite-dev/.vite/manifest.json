@@ -1,0 +1,89 @@
+{
+  "_client-C6yS_-c2.js": {
+    "file": "assets/client-C6yS_-c2.js",
+    "name": "client"
+  },
+  "_legacy-glYuW8_x.js": {
+    "file": "assets/legacy-glYuW8_x.js",
+    "name": "legacy",
+    "imports": [
+      "_client-C6yS_-c2.js"
+    ]
+  },
+  "_logo-white-6xObJnRf.svg": {
+    "file": "assets/logo-white-6xObJnRf.svg",
+    "src": "_logo-white-6xObJnRf.svg"
+  },
+  "_micro_carbon-nD50vR3D.png": {
+    "file": "assets/micro_carbon-nD50vR3D.png",
+    "src": "_micro_carbon-nD50vR3D.png"
+  },
+  "assets/global.css": {
+    "file": "assets/global-mNPewb0G.css",
+    "name": "assets/global.css",
+    "names": [
+      "assets/global.css"
+    ],
+    "src": "assets/global.css",
+    "isEntry": true
+  },
+  "assets/logo-gold.png": {
+    "file": "assets/logo-gold-ZW_l6PQr.png",
+    "src": "assets/logo-gold.png"
+  },
+  "entrypoints/inertia.js": {
+    "file": "assets/inertia-C04jqgKr.js",
+    "name": "entrypoints/inertia.js",
+    "src": "entrypoints/inertia.js",
+    "isEntry": true,
+    "imports": [
+      "_client-C6yS_-c2.js"
+    ],
+    "dynamicImports": [
+      "pages/dashboard/users/show.svelte",
+      "pages/posts/new.svelte",
+      "pages/sessions/new.svelte"
+    ],
+    "css": [
+      "assets/inertia-D9IveYIa.css",
+      "assets/global-mNPewb0G.css"
+    ]
+  },
+  "pages/dashboard/users/show.svelte": {
+    "file": "assets/show-hxnKUbix.js",
+    "name": "show",
+    "src": "pages/dashboard/users/show.svelte",
+    "isDynamicEntry": true,
+    "imports": [
+      "_client-C6yS_-c2.js",
+      "_legacy-glYuW8_x.js"
+    ],
+    "css": [
+      "assets/show-Dw3qUkBo.css"
+    ]
+  },
+  "pages/posts/new.svelte": {
+    "file": "assets/new-DvdAxEhh.js",
+    "name": "new",
+    "src": "pages/posts/new.svelte",
+    "isDynamicEntry": true,
+    "imports": [
+      "entrypoints/inertia.js",
+      "_client-C6yS_-c2.js",
+      "_legacy-glYuW8_x.js"
+    ],
+    "assets": [
+      "assets/logo-gold-ZW_l6PQr.png"
+    ]
+  },
+  "pages/sessions/new.svelte": {
+    "file": "assets/new-DuIyBOrn.js",
+    "name": "new",
+    "src": "pages/sessions/new.svelte",
+    "isDynamicEntry": true,
+    "imports": [
+      "_client-C6yS_-c2.js",
+      "_legacy-glYuW8_x.js"
+    ]
+  }
+}

@@ -12,6 +12,15 @@ a {
   font-weight: bold;
 }
 
+h2 {
+  font-size: 1.5rem;
+  font-weight: bold;
+}
+
+h3 {
+  font-size: 1.1rem;
+  font-weight: bold;
+}
 
 #app {
   max-width: 800px;
@@ -34,7 +43,7 @@ main > section {
 }
 
 .card {
-  background-color: #1a1a1a;
+  background-color: #212121;
   border-radius: 1rem;
   padding: 1rem;
 }
@@ -48,6 +57,28 @@ main > section {
   font-weight: bold;
   transition: all 0.3s ease;
   background-color: var(--bg-primary);
+}
+
+.action {
+  font-weight: normal;
+  display: inline-flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+
+  p {
+    font-size: 0.75rem;
+  }
+}
+
+.circle-btn {
+  width: 3rem;
+  height: 3rem;
+  border-radius: 50%;
+  background-color: #212121;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
 }
 
 .btn:hover {
