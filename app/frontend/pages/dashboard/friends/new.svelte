@@ -1,10 +1,16 @@
 <script>
   import { router } from 'inertiax-svelte'
-  const { current_user } = $props()
+  const { current_user, test } = $props()
   function back(ev) {
     // TODO: only call history.back() if we stay on the same origin
     history.back()
     ev.preventDefault()
+  }
+  function testbtn() {
+    router.push({
+      replace: false,
+      props: (currentProps, onceProps) => ({ ...currentProps, ...onceProps, test: 'test' })
+    })
   }
 </script>
 
@@ -30,3 +36,7 @@
     </div>
   </section>
 </main>
+
+<button onclick={testbtn}>
+  sfasdf {test}
+</button>

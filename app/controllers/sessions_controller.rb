@@ -5,9 +5,14 @@ class SessionsController < ApplicationController
 
   def create
     auth = request.env["omniauth.auth"]
-    Current.user = Identity.from_omniauth!(auth).user
+    Current.user = Identity.from_omniauth!(auth,
+      scout_id: cookies[:scout_id],
+      share_percentage: cookies[:share_percentage]
+    ).user
 
     session[:user_id] = Current.user.id
+    cookies.delete(:scout_id)
+    cookies.delete(:share_percentage)
 
     flash[:notice] = "Signed in successfully."
     render layout: false

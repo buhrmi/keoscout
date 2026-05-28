@@ -8,6 +8,11 @@
     easing: cubicOut,
     duration: 200
   })
+
+  $effect(() => {
+    // save percentage in cookie
+    document.cookie = `share_percentage=${percentage.current}; path=/; max-age=31536000`
+  })
 </script>
 
 <main class="text-center">
