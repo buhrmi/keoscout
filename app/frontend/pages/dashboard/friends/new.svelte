@@ -1,12 +1,23 @@
 <script>
+  import { router } from 'inertiax-svelte'
   const { current_user } = $props()
+  function back(ev) {
+    // TODO: only call history.back() if we stay on the same origin
+    history.back()
+    ev.preventDefault()
+  }
 </script>
 
 <main>
   <section>
-    <h2>Invite friends</h2>
+    <a onclick={back} href="/dashboard" class="btn-circle">
+      <div class="i-mdi:arrow-back text-xl">Back</div>
+    </a>
+  </section>
+  <section>
+    <h2>Earn together</h2>
     <div class="card mt-4">
-      <h3>Earn together</h3>
+      <h3>Invite friends</h3>
       <p>
         Your friends can set a percentage of their earnings to share with you.
       </p>

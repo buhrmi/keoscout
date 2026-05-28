@@ -11,7 +11,7 @@
     
     <div class="actions mt-4">
       <a use:inertia href="/dashboard/friends/new" class="action">
-        <div class="circle-btn">
+        <div class="btn-circle">
           <div class="i-mdi:user-add text-2xl"></div>
         </div>
         <p>

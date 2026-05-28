@@ -3,6 +3,9 @@ class ApplicationController < ActionController::Base
   allow_browser versions: :modern
   before_action :set_current_user
   before_action :redirect_authenticated_user
+  before_action :save_scout_id
+
+  use_inertia_instance_props
 
   inertia_share do
     {
@@ -14,6 +17,12 @@ class ApplicationController < ActionController::Base
 
   def set_current_user
     Current.user = User.find_by(id: session[:user_id]) if session[:user_id]
+  end
+
+  def save_scout_id
+    if params[:scout_id]
+      cookies[:scout_id] = params[:scout_id]
+    end
   end
 
   def redirect_authenticated_user

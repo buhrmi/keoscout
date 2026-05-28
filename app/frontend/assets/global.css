@@ -30,15 +30,22 @@ h3 {
 main > section {
   display: grid;
   grid-template-columns: 1rem auto 1rem;
+  /* border-bottom: 1px solid #444; */
   > * {
     grid-column: 2;
   }
   > *:first-child {
     margin-top: 1rem;
   }
+  > *:last-child {
+    margin-bottom: 1rem;
+  }
   > .full {
     grid-column: 1 / -1;
     margin-top: 0;
+  }
+  &:last-child {
+    border-bottom: none;
   }
 }
 
@@ -71,7 +78,7 @@ main > section {
   }
 }
 
-.circle-btn {
+.btn-circle {
   width: 3rem;
   height: 3rem;
   border-radius: 50%;
