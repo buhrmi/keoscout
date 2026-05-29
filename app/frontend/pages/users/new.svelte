@@ -20,7 +20,7 @@
   <img class="logo w-2/3 max-w-80 mx-auto pt-8 mb-4" src="~/assets/logo-gold.png" alt="Keo logo"/>
   <p class="mb-8">
     <!-- 0 VND paid out to creators so far. <br> -->
-    The easiest way to earn money with your photos.
+    The easiest way to turn talent into revenue
   </p>
   {#if scout}
   <p>
