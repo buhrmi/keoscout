@@ -1,5 +1,5 @@
 body {
-  height: 100dvh;
+  min-height: 100dvh;
   color: #ffffff;
   background: linear-gradient(-45deg, #0a0a0a 0%, #1a1a1a 100%);
   --color: #ffffff;
@@ -27,6 +27,15 @@ h3 {
   margin: 0 auto;
 }
 
+.hint {
+  font-size: 0.875rem;
+  color: #aaa;
+}
+
+main {
+  padding-inline: 1rem;
+}
+
 main > section {
   display: grid;
   grid-template-columns: 1rem auto 1rem;
@@ -49,11 +58,20 @@ main > section {
   }
 }
 
+
 .card {
   background-color: #212121;
   border-radius: 1rem;
   padding: 1rem;
+  section {
+    border-top: 1px solid #444;
+    padding-top: 1rem;
+    margin-top: 1rem;
+  }
+
 }
+
+
 
 .btn {
   display: inline-block;

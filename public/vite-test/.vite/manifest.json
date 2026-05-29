@@ -1,0 +1,104 @@
+{
+  "_bgpattern-KxpS1kFR.jpg": {
+    "file": "assets/bgpattern-KxpS1kFR.jpg",
+    "src": "_bgpattern-KxpS1kFR.jpg"
+  },
+  "_client-7A7XK-t7.js": {
+    "file": "assets/client-7A7XK-t7.js",
+    "name": "client"
+  },
+  "_legacy-B1ujTq5e.js": {
+    "file": "assets/legacy-B1ujTq5e.js",
+    "name": "legacy",
+    "imports": [
+      "_client-7A7XK-t7.js"
+    ]
+  },
+  "_logo-white-6xObJnRf.svg": {
+    "file": "assets/logo-white-6xObJnRf.svg",
+    "src": "_logo-white-6xObJnRf.svg"
+  },
+  "_micro_carbon-nD50vR3D.png": {
+    "file": "assets/micro_carbon-nD50vR3D.png",
+    "src": "_micro_carbon-nD50vR3D.png"
+  },
+  "assets/global.css": {
+    "file": "assets/global-36wDi3ee.css",
+    "name": "assets/global.css",
+    "names": [
+      "assets/global.css"
+    ],
+    "src": "assets/global.css",
+    "isEntry": true
+  },
+  "assets/logo-gold.png": {
+    "file": "assets/logo-gold-ZW_l6PQr.png",
+    "src": "assets/logo-gold.png"
+  },
+  "entrypoints/inertia.js": {
+    "file": "assets/inertia-DIuOJ-gz.js",
+    "name": "entrypoints/inertia.js",
+    "src": "entrypoints/inertia.js",
+    "isEntry": true,
+    "imports": [
+      "_client-7A7XK-t7.js"
+    ],
+    "dynamicImports": [
+      "pages/dashboard/friends/new.svelte",
+      "pages/dashboard/users/show.svelte",
+      "pages/sessions/new.svelte",
+      "pages/users/new.svelte"
+    ],
+    "css": [
+      "assets/inertia-D9bTGhht.css",
+      "assets/global-36wDi3ee.css"
+    ]
+  },
+  "pages/dashboard/friends/new.svelte": {
+    "file": "assets/new-DNuFn6kj.js",
+    "name": "new",
+    "src": "pages/dashboard/friends/new.svelte",
+    "isDynamicEntry": true,
+    "imports": [
+      "entrypoints/inertia.js",
+      "_client-7A7XK-t7.js"
+    ]
+  },
+  "pages/dashboard/users/show.svelte": {
+    "file": "assets/show-fn_D-ulS.js",
+    "name": "show",
+    "src": "pages/dashboard/users/show.svelte",
+    "isDynamicEntry": true,
+    "imports": [
+      "entrypoints/inertia.js",
+      "_client-7A7XK-t7.js",
+      "_legacy-B1ujTq5e.js"
+    ]
+  },
+  "pages/sessions/new.svelte": {
+    "file": "assets/new-CXU2mXkM.js",
+    "name": "new",
+    "src": "pages/sessions/new.svelte",
+    "isDynamicEntry": true,
+    "imports": [
+      "_client-7A7XK-t7.js",
+      "_legacy-B1ujTq5e.js"
+    ]
+  },
+  "pages/users/new.svelte": {
+    "file": "assets/new-kt4vyc1Z.js",
+    "name": "new",
+    "src": "pages/users/new.svelte",
+    "isDynamicEntry": true,
+    "imports": [
+      "entrypoints/inertia.js",
+      "_client-7A7XK-t7.js"
+    ],
+    "css": [
+      "assets/new-Ck4JfTKD.css"
+    ],
+    "assets": [
+      "assets/logo-gold-ZW_l6PQr.png"
+    ]
+  }
+}

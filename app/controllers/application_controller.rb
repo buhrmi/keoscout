@@ -21,7 +21,7 @@ class ApplicationController < ActionController::Base
 
   def save_scout_id
     if params[:scout_id]
-      cookies[:scout_id] = params[:scout_id]
+      session[:scout_id] = params[:scout_id]
     end
   end
 

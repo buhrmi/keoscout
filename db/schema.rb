@@ -57,6 +57,7 @@ ActiveRecord::Schema[8.1].define(version: 2026_05_27_024747) do
     t.string "name"
     t.string "password_digest"
     t.integer "scout_id"
+    t.integer "share_percentage", default: 0
     t.integer "talents_count", default: 0
     t.datetime "updated_at", null: false
   end

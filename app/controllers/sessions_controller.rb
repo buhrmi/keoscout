@@ -6,7 +6,7 @@ class SessionsController < ApplicationController
   def create
     auth = request.env["omniauth.auth"]
     Current.user = Identity.from_omniauth!(auth,
-      scout_id: cookies[:scout_id],
+      scout_id: session[:scout_id],
       share_percentage: cookies[:share_percentage]
     ).user
 
