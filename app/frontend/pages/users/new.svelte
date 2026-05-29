@@ -49,11 +49,9 @@
       </section>
     {/if}
   </div>
-  <a href="" class="btn mt-8 mb-2">
-    + Upload your first photo
-  </a><br>
-  or
-  <a use:inertia href="/dashboard" >continue to dashboard</a>
+  <a href="" class="upload-btn mt-8 mb-2">
+    Set up my profile
+  </a>
   {:else}
   <div class="card mt-4">
     Keo is currently invite-only.
@@ -66,4 +64,48 @@
   .logo {
     filter: drop-shadow(0 5px 5px rgba(0, 0, 0));
   }
+
+
+  .upload-btn {
+  display: inline-block;
+  padding: 14px 32px;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+  font-size: 16px;
+  font-weight: 600;
+  color: #ffffff;
+  text-decoration: none;
+  text-align: center;
+  cursor: pointer;
+  
+  /* Metallic Gold Gradient & Border */
+  background: linear-gradient(180deg, #b78647 0%, #684218 100%);
+  border: 1px solid #865d2b;
+  border-radius: 32px;
+  
+  /* 3D Drop Shadow & Inner Glow */
+  box-shadow: 
+    0 4px 15px rgba(0, 0, 0, 0.5), 
+    inset 0 1px 1px rgba(255, 255, 255, 0.2);
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.6);
+  
+  /* Smooth Transition for Hover Effects */
+  transition: all 0.2s ease-in-out;
+}
+
+/* Hover State (Slightly brighter, subtle lift) */
+.upload-btn:hover {
+  background: linear-gradient(180deg, #c79656 0%, #784d1d 100%);
+  box-shadow: 
+    0 6px 20px rgba(0, 0, 0, 0.6), 
+    inset 0 1px 1px rgba(255, 255, 255, 0.3);
+  /* transform: translateY(-1px); */
+}
+
+/* Active State (Pressed down effect) */
+.upload-btn:active {
+  /* transform: translateY(1px); */
+  box-shadow: 
+    0 2px 8px rgba(0, 0, 0, 0.6), 
+    inset 0 1px 3px rgba(0, 0, 0, 0.4);
+}
 </style>
