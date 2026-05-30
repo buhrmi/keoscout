@@ -1,17 +1,12 @@
 <script>
   import { router } from '@inertiajs/svelte'
-  const { current_user, test } = $props()
+  const { current_user } = $props()
   function back(ev) {
     // TODO: only call history.back() if we stay on the same origin
     history.back()
     ev.preventDefault()
   }
-  function testbtn() {
-    router.push({
-      replace: false,
-      props: (currentProps, onceProps) => ({ ...currentProps, ...onceProps, test: 'test' })
-    })
-  }
+
 </script>
 
 <main>
@@ -21,9 +16,9 @@
     </a>
   </section>
   <section>
-    <h2>Earn together</h2>
+    <h2>Invite friends</h2>
     <div class="card mt-4">
-      <h3>Invite friends</h3>
+      <h3>Earn together</h3>
       <p>
         Your friends can set a percentage of their earnings to share with you.
       </p>
@@ -36,7 +31,3 @@
     </div>
   </section>
 </main>
-
-<button onclick={testbtn}>
-  sfasdf {test}
-</button>

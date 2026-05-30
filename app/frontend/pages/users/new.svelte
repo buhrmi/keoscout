@@ -62,7 +62,7 @@
   <footer>
     <section>
       <a href="/session/new" use:inertia class="btn mt-8 mb-2">
-        Set up my profile
+        Create my account
       </a>
     </section>
   </footer>

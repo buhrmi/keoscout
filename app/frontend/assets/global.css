@@ -48,7 +48,7 @@ main > section,
 footer > section {
   display: grid;
   grid-template-columns: 1rem auto 1rem;
-  /* border-bottom: 1px solid #444; */
+  border-bottom: 1px solid #444;
   > * {
     grid-column: 2;
   }
@@ -105,29 +105,29 @@ h3 {
 
 
 
-  .loading .btn {
-    color: transparent;
-    pointer-events: none;
-    text-shadow: none;
-  }
+.loading .btn.loader {
+  color: transparent;
+  pointer-events: none;
+  text-shadow: none;
+}
 
-  .loading .btn::before {
-    content: '';
-    position: absolute;
-    width: 20px;
-    height: 20px;
-    border: 2px solid rgba(255, 255, 255, 0.3);
-    border-top-color: #ffffff;
-    border-radius: 50%;
-    animation: spin 0.8s linear infinite;
-    left: 50%;
-    top: 50%;
-    transform: translate(-50%, -50%);
-  }
+.loading .btn.loader::before {
+  content: '';
+  position: absolute;
+  width: 20px;
+  height: 20px;
+  border: 2px solid rgba(255, 255, 255, 0.3);
+  border-top-color: #ffffff;
+  border-radius: 50%;
+  animation: spin 0.8s linear infinite;
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%, -50%);
+}
 
-  @keyframes spin {
-    to { transform: translate(-50%, -50%) rotate(360deg); }
-  }
+@keyframes spin {
+  to { transform: translate(-50%, -50%) rotate(360deg); }
+}
 
   .btn {
   display: inline-flex;
