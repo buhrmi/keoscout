@@ -1,5 +1,5 @@
 # Keo
 
-Keo is an open source platform where users can showcase their talent, sell content, and accept bookings.
+Keo is an open-source live streaming platform with built-in revenue sharing.
 
 © Keo Platforms LLC
