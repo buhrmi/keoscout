@@ -1,36 +1,9 @@
 <script>
-import { onMount } from 'svelte'
-import { router } from 'inertiax-svelte'
-const { children } = $props()
-
-function setup() {
-  // add .loading class to body while inertia is loading
-  document.addEventListener("inertia:start", () => {
-    document.body.classList.add("loading")
-  })
-
-  // remove .loading class from body when inertia finishes loading
-  document.addEventListener("inertia:finish", () => {
-    document.body.classList.remove("loading")
-    document.querySelectorAll(".loader").forEach(el => el.classList.remove("loader"))
-  })
-
-  // add the loader class to all .btn elements when they are clicked
-  document.addEventListener("click", (ev) => {
-    const btn = ev.target.closest(".btn")
-    if (btn) {
-      btn.classList.add("loader")
-    }
-  })
-
-  window.addEventListener('message', function(event) {
-    if (event.data == 'session-created') {
-      router.reload()
-    }
-  })
-}
-
-onMount(setup)
+const { 
+  header = true,
+  footer = true,
+  children
+} = $props()
 </script>
 
 <svelte:head>
@@ -38,5 +11,26 @@ onMount(setup)
 </svelte:head>
 
 <div class="layout">
+  {#if header}
+    <header>
+      <section>
+        <a href="/" class="logo">
+          <img src="~/assets/logo.png" alt="Keo" class="h-12"/>
+        </a>
+      </section>
+    </header>
+  {/if}
+  
   {@render children()}
+  
+  {#if footer}
+    <footer>
+      <section>
+        <p class="text-sm text-gray-500">
+          &copy; {new Date().getFullYear()} Keo Platforms.
+          <a href="/terms" class="subtle">Terms of Service</a>
+        </p>
+      </section>
+    </footer>
+  {/if}
 </div>

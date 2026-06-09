@@ -1,5 +1,9 @@
+<script module>
+  import NoHeader from '~/layouts/no_header.svelte'
+  export const layout = NoHeader
+</script>
+
 <script>
-  import { inertia } from 'inertiax-svelte'
   import { Tween } from 'svelte/motion';
   import { cubicOut } from 'svelte/easing';
   import { slide } from 'svelte/transition';
@@ -57,14 +61,7 @@
   </section>
 </main>
 
-<footer>
-  <section>
-    <p class="text-sm text-gray-500">
-      &copy; {new Date().getFullYear()} Keo Platforms.
-      <a href="/terms" class="subtle">Terms of Service</a>
-    </p>
-  </section>
-</footer>
+
 {#if scout}
   <nav>
     <section>

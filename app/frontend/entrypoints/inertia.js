@@ -8,5 +8,9 @@ import { createInertiaApp } from 'inertiax-svelte'
 
 createInertiaApp({
   pages: "../pages",
-  layout: () => Default
+  layout: () => Default,
+  async withApp(app, { ssr }) {
+    if (ssr) return
+    import('~/lib/setup')
+  }
 })

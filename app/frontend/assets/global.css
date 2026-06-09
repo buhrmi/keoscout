@@ -46,6 +46,7 @@ nav {
   background: linear-gradient(to top, #000000, transparent);
 }
 
+header > section,
 main > section,
 footer > section,
 nav > section {
