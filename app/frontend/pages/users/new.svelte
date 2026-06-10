@@ -7,8 +7,9 @@
   import { Tween } from 'svelte/motion';
   import { cubicOut } from 'svelte/easing';
   import { slide } from 'svelte/transition';
+  import { modal } from '~/lib/Modal.svelte';
 
-  const { scout } = $props()
+  const { referrer } = $props()
   let percentage = new Tween(15, {
     easing: cubicOut,
     duration: 200
@@ -26,16 +27,16 @@
   <p class="mb-8">
     The easiest way to earn money with your photos.
   </p>
-  {#if scout}
+  {#if referrer}
   <p>
-    <span class="text-xl"><strong>{scout.name}</strong> has invited you!</span>
+    <span class="text-xl"><strong>{referrer.name}</strong> has invited you!</span>
   </p>
   <div class="card mt-4 text-left">
     <div class="flex items-center gap-4">
       <label for="enable_sharing" class="flex-1">
         <h3>Earn together</h3>
         <p class="hint">
-          {scout.name} will receive a percentage of what you earn. You can change this any time.
+          {referrer.name} will receive a percentage of what you earn. You can change this any time.
         </p>
       </label>
       <label class="switch" for="enable_sharing">
@@ -62,11 +63,11 @@
 </main>
 
 
-{#if scout}
+{#if referrer}
   <nav>
     <section>
-      <a href="/session/new" class="btn mt-8 mb-2">
-        Create my account
+      <a href="/session/new" use:modal class="btn mt-8 mb-2">
+        Get started
       </a>
     </section>
   </nav>

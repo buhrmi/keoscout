@@ -6,6 +6,10 @@ body {
   --bg-primary-active: #ffffff;
 }
 
+body:has(.modal) {
+  overflow: hidden;
+}
+
 #app {
   max-width: 800px;
   margin: 0 auto;

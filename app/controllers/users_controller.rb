@@ -2,6 +2,6 @@
 
 class UsersController < InertiaController
   def new
-    @scout = User.find_by(id: session[:scout_id]).as_json(only: [ :name ]) if session[:scout_id]
+    @referrer = User.find_by(id: session[:scout_id]).as_json(only: [ :name ]) if session[:scout_id]
   end
 end
