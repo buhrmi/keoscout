@@ -1,0 +1,24 @@
+{
+  "name": "inertiax-ui",
+  "version": "0.0.1",
+  "description": "UI component library for InertiaX",
+  "type": "module",
+  "svelte": "./Modal.svelte",
+  "main": "./index.js",
+  "exports": {
+    ".": {
+      "types": "./index.d.ts",
+      "svelte": "./Modal.svelte",
+      "default": "./index.js"
+    },
+    "./Modal.svelte": "./Modal.svelte"
+  },
+  "files": [
+    "index.js",
+    "Modal.svelte",
+    "index.d.ts"
+  ],
+  "peerDependencies": {
+    "svelte": "^5.0.0"
+  }
+}

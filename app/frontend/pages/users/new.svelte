@@ -7,7 +7,7 @@
   import { Tween } from 'svelte/motion';
   import { cubicOut } from 'svelte/easing';
   import { slide } from 'svelte/transition';
-  import { modal } from '~/lib/Modal.svelte';
+  import { modal } from 'inertiax-ui';
 
   const { referrer } = $props()
   let percentage = new Tween(15, {

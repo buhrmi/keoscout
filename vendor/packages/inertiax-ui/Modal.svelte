@@ -1,7 +1,7 @@
 <script module>
   import { mount, unmount } from 'svelte';
   import { Frame } from 'inertiax-svelte'
-  import Modal from '~/lib/Modal.svelte'
+  import Modal from './Modal.svelte';
 
   export function modal(node) {
     node.addEventListener('click', (e) => {
