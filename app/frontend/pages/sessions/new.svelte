@@ -6,10 +6,10 @@
   <section>
     
     <div class="notice">
-      Please connect your Zalo account to continue.
+      Connect your Zalo account to continue.
     </div>
     <button class="btn" onclick={() => login('zalo')}>
-      Continue with Zalo
+      Connect Zalo
     </button>
   </section>
 
@@ -17,13 +17,6 @@
 
 
 <style>
-  main {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    height: 100vh;
-  }
-
   .notice {
     border: 1px solid #888;
     padding: 1rem;

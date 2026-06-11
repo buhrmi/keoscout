@@ -4,7 +4,7 @@
   "workspaces": [
     "vendor/packages/*"
   ],
-  "dependencies": {
+  "devDependencies": {
     "inertiax-ui": "workspace:*",
     "@iconify/json": "^2.2.484",
     "@sveltejs/vite-plugin-svelte": "^7.1.2",
@@ -15,9 +15,7 @@
     "svelte": "^5.0.0",
     "svelte-preprocess-import-assets": "^1.1.0",
     "vite": "^8.0.16",
-    "vite-plugin-ruby": "^5.2.2"
-  },
-  "devDependencies": {
+    "vite-plugin-ruby": "^5.2.2",
     "@unocss/preset-icons": "^66.7.0",
     "unocss": "^66.7.0"
   }
