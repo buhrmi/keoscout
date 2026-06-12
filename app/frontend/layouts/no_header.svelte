@@ -1,10 +1,10 @@
 <script>
   import Default from './default.svelte'
-  const { children } = $props()
+  const props = $props()
 </script>
 
 <svelte:head>
   <title>Keo</title>
 </svelte:head>
 
-<Default header={false} {children} />
+<Default header={false} {...props} />

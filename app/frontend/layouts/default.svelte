@@ -1,10 +1,15 @@
 <script>
+import { modal } from 'inertiax-ui'
 const {
   current_user,
+  referrer,
   header = true,
   footer = true,
   children
 } = $props()
+$effect(() => {
+  console.log({ current_user, referrer })
+})
 </script>
 
 <svelte:head>
@@ -59,6 +64,14 @@ const {
           </a>
         </li>
       </menu>
+    </nav>
+  {:else if referrer}
+    <nav>
+      <section>
+        <a href="/session/new" use:modal class="btn mt-8 mb-2">
+          Get started
+        </a>
+      </section>
     </nav>
   {/if}
 </div>

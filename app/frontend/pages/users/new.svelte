@@ -7,7 +7,6 @@
   import { Tween } from 'svelte/motion';
   import { cubicOut } from 'svelte/easing';
   import { slide } from 'svelte/transition';
-  import { modal } from 'inertiax-ui';
 
   const { referrer } = $props()
   let percentage = new Tween(15, {
@@ -55,23 +54,13 @@
     {/if}
   </div>
   {:else}
-  <div class="card mt-4">
-    Keo is currently invite-only.
-  </div>
+    <div class="card mt-4">
+      Keo is currently invite-only. Please ask your friend for an invite to get started.
+    </div>
   {/if}
   </section>
 </main>
 
-
-{#if referrer}
-  <nav>
-    <section>
-      <a href="/session/new" use:modal class="btn mt-8 mb-2">
-        Get started
-      </a>
-    </section>
-  </nav>
-{/if}
 
 
 <style>
