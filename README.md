@@ -1,9 +1,7 @@
 # Keo
 
-Keo is an open-source content monetization platform with built-in revenue sharing that you can deploy on your own server or favorite cloud provider.
+Keo is an open-source content monetization platform with built-in revenue sharing.
 
-Demo coming soon.
+## Copyright
 
-[Get in touch](mailto:sales@buhrmi.de) for support with deployment and rebranding.
-
-© Keo Platforms LLC
+© Keo Platforms LLC, registered and based in Da Nang, Vietnam
