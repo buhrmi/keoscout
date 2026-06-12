@@ -1,33 +1,18 @@
 <script>
-  import { router } from 'inertiax-svelte'
   const { current_user } = $props()
-  function back(ev) {
-    // TODO: only call history.back() if we stay on the same origin
-    history.back()
-    ev.preventDefault()
-  }
-
 </script>
 
 <main>
-  <section>
-    <a onclick={back} href="/dashboard" class="btn-circle">
-      <div class="i-mdi:arrow-back text-xl">Back</div>
-    </a>
+  <section class="text-center place-items-center">
+    <img src="~/assets/logo-gold.png" class="w-60% mb-4" alt="">
+    <p>The easiest way to earn money with your photos</p>
   </section>
-  <section>
-    <h2>Invite friends</h2>
-    <div class="card mt-4">
-      <h3>Earn together</h3>
-      <p>
-        Your friends can set a percentage of their earnings to share with you.
-      </p>
-    </div>
+  <section class="pb-16">
+    
     <div class="card mt-4 text-center">
-      <h3 class="mb-4">
-        Your QR code
-      </h3>
-      <img class="inline-block" src="https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=https://keoscout.com?scout_id={current_user.id}" alt="QR code"/>
+      <h2>Earn together</h2>
+      <p>Share this code with friends to invite them to Keo and start earning together.</p>
+      <img class="inline-block mt-4" src="https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=https://keoscout.com?scout_id={current_user.id}" alt="QR code"/>
     </div>
   </section>
 </main>

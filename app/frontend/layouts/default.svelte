@@ -1,5 +1,6 @@
 <script>
-const { 
+const {
+  current_user,
   header = true,
   footer = true,
   children
@@ -33,4 +34,40 @@ const {
       </section>
     </footer>
   {/if}
+
+  {#if current_user}
+    <nav>
+      <menu>
+        <li>
+          <a href="/dashboard" class="action">
+            <div class="btn-circle">
+              <div class="i-mdi:home text-2xl"></div>
+            </div>
+            <p>
+              Home
+            </p>
+          </a>
+        </li>
+        <li>
+          <a href="/dashboard/friends" class="action">
+            <div class="btn-circle">
+              <div class="i-mdi:account-group text-2xl"></div>
+            </div>
+            <p>
+              Friends
+            </p>
+          </a>
+        </li>
+      </menu>
+    </nav>
+  {/if}
 </div>
+
+<style>
+  nav menu {
+    display: flex;
+    justify-content: space-around;
+    gap: 1rem;
+    padding: 0.5rem;
+  }
+</style>
