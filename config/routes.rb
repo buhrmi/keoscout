@@ -9,6 +9,7 @@ Rails.application.routes.draw do
   namespace :dashboard do
     resource :user
     resources :friends
+    resources :posts
     root "users#show"
   end
 

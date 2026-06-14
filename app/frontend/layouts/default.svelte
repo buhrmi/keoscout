@@ -7,9 +7,7 @@ const {
   footer = true,
   children
 } = $props()
-$effect(() => {
-  console.log({ current_user, referrer })
-})
+
 </script>
 
 <svelte:head>
@@ -50,6 +48,16 @@ $effect(() => {
             </div>
             <p>
               Home
+            </p>
+          </a>
+        </li>
+        <li>
+          <a use:modal href="/dashboard/posts/new" class="action">
+            <div class="btn-circle">
+              <div class="i-mdi:plus text-2xl"></div>
+            </div>
+            <p>
+              New Post
             </p>
           </a>
         </li>

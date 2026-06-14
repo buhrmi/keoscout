@@ -1,7 +1,5 @@
 <script>
-  import { inertia } from 'inertiax-svelte'
-  import { router } from 'inertiax-svelte'
-
+  import { modal } from 'inertiax-ui'
 </script>
 
 <main>
@@ -15,13 +13,12 @@
     <div class="card">
       <h3>🎉 Welcome to Keo</h3>
       <p>
-        Set up your profile to get started.
+        Create your first post to start earning.
       </p>
-      <a use:inertia href="/dashboard/user/edit" class="btn w-full mt-4">
-        Set up profile
+      <a use:modal href="/dashboard/posts/new" class="btn w-full mt-4">
+        Create Post
       </a>
     </div>
   </section>
-  
 </main>
 
