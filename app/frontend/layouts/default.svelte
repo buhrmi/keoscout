@@ -1,5 +1,7 @@
 <script>
 import { modal } from 'inertiax-ui'
+import 'inertiax-ui/dark.css'
+
 const {
   current_user,
   referrer,

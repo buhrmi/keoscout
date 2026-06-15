@@ -8,10 +8,10 @@
         "@sveltejs/vite-plugin-svelte": "^7.1.2",
         "@unocss/preset-icons": "^66.7.2",
         "@unocss/reset": "^66.7.2",
-        "inertiax-core": "^11.0.12",
-        "inertiax-svelte": "^11.0.12",
+        "inertiax-core": "^11.0.14",
+        "inertiax-svelte": "^11.0.14",
         "inertiax-ui": "workspace:*",
-        "inertiax-vite": "^11.0.12",
+        "inertiax-vite": "^11.0.14",
         "svelte": "^5.56.3",
         "svelte-preprocess-import-assets": "^1.1.0",
         "unocss": "^66.7.2",
@@ -21,7 +21,7 @@
     },
     "vendor/packages/inertiax-ui": {
       "name": "inertiax-ui",
-      "version": "0.0.1",
+      "version": "0.0.3",
       "peerDependencies": {
         "inertiax-svelte": "^11.0.8",
         "svelte": "^5.0.0",
@@ -235,13 +235,13 @@
 
     "import-meta-resolve": ["import-meta-resolve@4.2.0", "", {}, "sha512-Iqv2fzaTQN28s/FwZAoFq0ZSs/7hMAHJVX+w8PZl3cY19Pxk6jFFalxQoIfW2826i/fDLXv8IiEZRIT0lDuWcg=="],
 
-    "inertiax-core": ["inertiax-core@11.0.14", "", { "dependencies": { "@jridgewell/trace-mapping": "^0.3.31", "es-toolkit": "^1.47.1", "laravel-precognition": "^2.0.0" }, "peerDependencies": { "axios": "^1.15.2" }, "optionalPeers": ["axios"] }, "sha512-tTTHUpqJGSU5Q/Em1fvZQfwwoa2X/bFL/HI2l5pmIpTwxqDDBteDxJpBMCBTDpt0X2opN0CW2PUDQjEAGGEvqQ=="],
+    "inertiax-core": ["inertiax-core@11.0.15", "", { "dependencies": { "@jridgewell/trace-mapping": "^0.3.31", "es-toolkit": "^1.47.1", "laravel-precognition": "^2.0.0" }, "peerDependencies": { "axios": "^1.15.2" }, "optionalPeers": ["axios"] }, "sha512-iuOjPukAdNI3YMJ05KMOKBVp9uOmNQSTTd7O55O5OyJlHIpdDqA/yFCntMm3vPpoVqQ0nqxrrZhbp/81ODjtFA=="],
 
-    "inertiax-svelte": ["inertiax-svelte@11.0.14", "", { "dependencies": { "es-toolkit": "^1.47.1", "inertiax-core": "11.0.14", "laravel-precognition": "^2.0.0" }, "peerDependencies": { "svelte": "^5.0.0" } }, "sha512-NhoPvjG0e8jDJ/Ndh589UPQB/4/+OGofOCL1aehUKX/yhCmLrQy5u8JcAkwxIqIxHSmMxcmgfoydbDjDqnvWow=="],
+    "inertiax-svelte": ["inertiax-svelte@11.0.15", "", { "dependencies": { "es-toolkit": "^1.47.1", "inertiax-core": "11.0.15", "laravel-precognition": "^2.0.0" }, "peerDependencies": { "svelte": "^5.0.0" } }, "sha512-svNy1dHamdwks/06c8o6EqEUl/KBfhUxzvLknxBxtEk3MfIg1u2VI1maW7D6H9egH6NRxQ9eXZzcyBOd9bcfGw=="],
 
     "inertiax-ui": ["inertiax-ui@workspace:vendor/packages/inertiax-ui"],
 
-    "inertiax-vite": ["inertiax-vite@11.0.14", "", { "dependencies": { "inertiax-core": "11.0.14", "tinyglobby": "^0.2.17" }, "peerDependencies": { "vite": "^7.0.0 || ^8.0.0" } }, "sha512-dNQrYuEu26bK1JgXGy6eXRrtKFL2lPHCJtevAq9m2mB3djEYnra2ylTmO07Cc7lnQCf68UXmbGDox1vtBpcBWg=="],
+    "inertiax-vite": ["inertiax-vite@11.0.15", "", { "dependencies": { "inertiax-core": "11.0.15", "tinyglobby": "^0.2.17" }, "peerDependencies": { "vite": "^7.0.0 || ^8.0.0" } }, "sha512-VGsky1WZmO7meMwPQYHqTaMhEYYkARnEGRHAMZgF7JUUhkL5E0FagJhaR8J6QixYlA2eBns1sLtJo4+PAjOcXw=="],
 
     "is-reference": ["is-reference@3.0.3", "", { "dependencies": { "@types/estree": "^1.0.6" } }, "sha512-ixkJoqQvAP88E6wLydLGGqCJsrFUnqoH6HnaczB8XmDH1oaWU+xxdptvikTgaEhtZ53Ky6YXiBuUI2WXLMCwjw=="],
 

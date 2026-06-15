@@ -23,7 +23,8 @@ body:has(.modal) {
   min-height: 100dvh;
 }
 
-.layout {
+.layout,
+.inx-modal {
   display: grid;
   width: 100%;
   grid-template-rows: auto 1fr auto auto;
