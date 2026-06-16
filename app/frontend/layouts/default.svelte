@@ -1,6 +1,7 @@
 <script>
 import { modal } from 'inertiax-ui'
 import 'inertiax-ui/dark.css'
+import { currentUser } from '~/stores/user.svelte.js'
 
 const {
   current_user,
@@ -9,6 +10,8 @@ const {
   footer = true,
   children
 } = $props()
+
+$effect(() => $currentUser = current_user)
 
 </script>
 

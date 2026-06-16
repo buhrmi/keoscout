@@ -1,5 +1,14 @@
 <script>
   import { login } from '~/lib/auth.js'
+  import { currentUser } from '~/stores/user.svelte.js'
+  
+  const { close } = $props()
+
+  $effect(() => {
+    if ($currentUser) {
+      close(false)
+    }
+  })
 </script>
 
 <main>

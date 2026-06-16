@@ -1,9 +1,4 @@
 {
-  "private": true,
-  "type": "module",
-  "workspaces": [
-    "vendor/packages/*"
-  ],
   "devDependencies": {
     "inertiax-ui": "workspace:*",
     "@iconify/json": "^2.2.486",
@@ -18,5 +13,10 @@
     "vite-plugin-ruby": "^5.2.2",
     "@unocss/preset-icons": "^66.7.2",
     "unocss": "^66.7.2"
-  }
+  },
+  "private": true,
+  "type": "module",
+  "workspaces": [
+    "vendor/packages/*"
+  ]
 }
