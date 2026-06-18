@@ -11,6 +11,15 @@ document.addEventListener("inertia:finish", () => {
   document.querySelectorAll(".loader").forEach(el => el.classList.remove("loader"))
 })
 
+window.addEventListener("push", () => {
+  document.querySelectorAll(".loader").forEach(el => el.classList.remove("loader"))
+})
+
+window.addEventListener("popstate", () => {
+  document.querySelectorAll(".loader").forEach(el => el.classList.remove("loader"))
+})
+
+
 // add the loader class to all .btn elements when they are clicked
 document.addEventListener("click", (ev) => {
   const btn = ev.target.closest(".btn")
