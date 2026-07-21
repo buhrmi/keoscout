@@ -10,7 +10,7 @@ createInertiaApp({
   pages: "../pages",
   layout: () => Default,
   async withApp(app, { ssr }) {
-    if (ssr) return
-    import('~/lib/setup')
+    if (ssr) return;
+    import('~/lib/setup');
   }
 })

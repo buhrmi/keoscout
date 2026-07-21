@@ -7,6 +7,11 @@
   import { Tween } from 'svelte/motion';
   import { cubicOut } from 'svelte/easing';
   import { slide } from 'svelte/transition';
+  import { appKit } from '~/lib/appkit.ts'
+
+  function connect() {
+    appKit.open()
+  }
 
   const { referrer } = $props()
   let percentage = new Tween(15, {
@@ -24,7 +29,7 @@
   <section>
   <img class="logo w-2/3 max-w-80 mx-auto pt-8 mb-4" src="~/assets/logo-gold.png" alt="Keo logo"/>
   <p class="mb-8">
-    The easiest way to earn money with your photos.
+    The world's first crypto-native content monetization platform.
   </p>
   {#if referrer}
   <p>
@@ -51,17 +56,18 @@
         </div>
         <input type="range" min="1" max="100" value={percentage.current} oninput={(e) => percentage.set(parseInt(e.target.value), {duration: 0})} class="w-full mt-2"/>
       </section>
-    {/if}
-  </div>
+      {/if}
+    </div>
+      <button onclick={connect} class="btn mt-8 mb-2">
+        Connect Wallet
+      </button>
   {:else}
     <div class="card mt-4">
-      Keo is currently invite-only. Please ask your friend for an invite to get started.
+      Keo is currently invite-only.
     </div>
   {/if}
   </section>
 </main>
-
-
 
 <style>
   .logo {

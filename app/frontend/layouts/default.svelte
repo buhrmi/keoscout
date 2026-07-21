@@ -1,6 +1,6 @@
 <script>
 import { modal } from 'inertiax-ui'
-import 'inertiax-ui/dark.css'
+import 'inertiax-ui/modal.css'
 import { currentUser } from '~/stores/user.svelte.js'
 
 const {
@@ -16,7 +16,7 @@ $effect(() => $currentUser = current_user)
 </script>
 
 <svelte:head>
-  <title>Keo</title>
+  <title>KeoScout</title>
 </svelte:head>
 
 <div class="layout">
@@ -27,6 +27,11 @@ $effect(() => $currentUser = current_user)
           <img src="~/assets/logo.png" alt="Keo" class="h-12"/>
         </a>
       </section>
+      {#if current_user}
+      <section>
+        <a href="/session" data-method="delete">Log out</a>
+      </section>
+      {/if}
     </header>
   {/if}
   
@@ -77,14 +82,6 @@ $effect(() => $currentUser = current_user)
           </a>
         </li>
       </menu>
-    </nav>
-  {:else if referrer}
-    <nav>
-      <section>
-        <a href="/session/new" use:modal class="btn mt-8 mb-2">
-          Get started
-        </a>
-      </section>
     </nav>
   {/if}
 </div>

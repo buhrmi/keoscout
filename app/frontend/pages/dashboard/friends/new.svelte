@@ -5,9 +5,7 @@
 <main>
   <section class="text-center place-items-center">
     <img src="~/assets/logo-gold.png" class="w-60% mb-4" alt="">
-    <p>The easiest way to earn money with your photos</p>
-  </section>
-  <section class="pb-16">
+    <p>The easiest way to earn money with your content</p>
     
     <div class="card mt-4 text-center">
       <h2>Earn together</h2>

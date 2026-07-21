@@ -1,6 +1,6 @@
 class User < ApplicationRecord
   JSON_OPTIONS = {
-    only: [ :id, :name, :handle ],
+    only: [ :id, :name, :handle, :preferred_currency ],
     include: {
       profile_image: {},
       header_image: {}

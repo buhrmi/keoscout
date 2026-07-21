@@ -2,7 +2,12 @@
 
 # KeoScout
 
-KeoScout is an open-source content monetization platform with built-in revenue sharing.
+KeoScout is the world's first crypto-native content monetization platform
+
+## Features
+
+- Built-in revenue sharing<br>
+  Talent scouts automatically receive a cut of their talent's success
 
 ## Copyright
 

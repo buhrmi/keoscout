@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_05_27_024747) do
+ActiveRecord::Schema[8.1].define(version: 2026_07_21_000000) do
   create_table "active_storage_attachments", force: :cascade do |t|
     t.bigint "blob_id", null: false
     t.datetime "created_at", null: false
@@ -57,6 +57,7 @@ ActiveRecord::Schema[8.1].define(version: 2026_05_27_024747) do
     t.string "locale", default: "en"
     t.string "name"
     t.string "password_digest"
+    t.string "preferred_currency"
     t.integer "scout_id"
     t.integer "share_percentage", default: 0
     t.integer "talents_count", default: 0

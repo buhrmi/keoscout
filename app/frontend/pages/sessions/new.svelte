@@ -1,5 +1,6 @@
 <script>
   import { login } from '~/lib/auth.js'
+  import { appKit } from '~/lib/appkit.ts'
   import { currentUser } from '~/stores/user.svelte.js'
   
   const { close } = $props()
@@ -13,16 +14,12 @@
 
 <main>
   <section>
-    <h2>Continue to Keo</h2>
-    <p>
-      At this time, we require all new users to authenticate with their Zalo account. Don't worry, you can
-      delete your account any time.
-    </p>
-    <button class="btn mt-8" onclick={() => login('zalo')}>
+    <p class="text-center">Connect your wallet to continue.</p>
+    <!-- <button class="btn mt-8" onclick={() => login('zalo')}>
       Connect Zalo
-    </button>
+    </button> -->
+    <appkit-button />
   </section>
-
 </main>
 
 
