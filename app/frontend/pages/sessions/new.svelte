@@ -18,7 +18,6 @@
     <!-- <button class="btn mt-8" onclick={() => login('zalo')}>
       Connect Zalo
     </button> -->
-    <appkit-button />
   </section>
 </main>
 

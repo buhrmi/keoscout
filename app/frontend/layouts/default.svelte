@@ -2,12 +2,12 @@
 import { modal } from 'inertiax-ui'
 import 'inertiax-ui/modal.css'
 import { currentUser } from '~/stores/user.svelte.js'
+import { login } from '~/lib/appkit.ts'
 
 const {
   current_user,
-  referrer,
-  header = true,
   footer = true,
+  referrer,
   children
 } = $props()
 
@@ -20,20 +20,25 @@ $effect(() => $currentUser = current_user)
 </svelte:head>
 
 <div class="layout">
-  {#if header}
-    <header>
-      <section>
-        <a href="/" class="logo">
-          <img src="~/assets/logo.png" alt="Keo" class="h-12"/>
-        </a>
-      </section>
+  <header>
+    <menu>
+      <a href="/" class="logo">
+        <img src="~/assets/logo.png" alt="Keo" class="h-12"/>
+      </a>
       {#if current_user}
-      <section>
-        <a href="/session" data-method="delete">Log out</a>
-      </section>
+        <p>
+          <a href="/session" data-method="delete">Log out</a>
+        </p>
+      {:else}
+        <button onclick={login}>Log in</button>
       {/if}
-    </header>
-  {/if}
+    </menu>
+    {#if !current_user}
+      <p class="pt-4">
+        Crypto-native ass shaking monetization platform.
+      </p>
+    {/if}
+  </header>
   
   {@render children()}
   
@@ -92,5 +97,16 @@ $effect(() => $currentUser = current_user)
     justify-content: space-around;
     gap: 1rem;
     padding: 0.5rem;
+  }
+
+  header {
+    border-bottom: 1px solid var(--color-border);
+    padding: var(--padding);
+    menu {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
   }
 </style>

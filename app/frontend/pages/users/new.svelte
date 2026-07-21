@@ -1,8 +1,3 @@
-<script module>
-  import NoHeader from '~/layouts/no_header.svelte'
-  export const layout = NoHeader
-</script>
-
 <script>
   import { Tween } from 'svelte/motion';
   import { cubicOut } from 'svelte/easing';
@@ -10,7 +5,7 @@
   import { appKit } from '~/lib/appkit.ts'
 
   function connect() {
-    appKit.open()
+    $appKit.open()
   }
 
   const { referrer } = $props()
@@ -25,22 +20,18 @@
   })
 </script>
 
-<main class="text-center">
+<main>
   <section>
-  <img class="logo w-2/3 max-w-80 mx-auto pt-8 mb-4" src="~/assets/logo-gold.png" alt="Keo logo"/>
-  <p class="mb-8">
-    The world's first crypto-native content monetization platform.
-  </p>
   {#if referrer}
   <p>
-    <span class="text-xl"><strong>{referrer.name}</strong> has invited you!</span>
+    <span class="text-2xl"><strong>{referrer.name}</strong> invited you to shake your ass!</span>
   </p>
   <div class="card mt-4 text-left">
     <div class="flex items-center gap-4">
       <label for="enable_sharing" class="flex-1">
-        <h3>Earn together</h3>
+        <h3>Give back some love</h3>
         <p class="hint">
-          {referrer.name} will receive a percentage of what you earn. You can change this any time.
+          {referrer.name} will receive a percentage of your monetization. You can change this any time.
         </p>
       </label>
       <label class="switch" for="enable_sharing">
@@ -70,7 +61,10 @@
 </main>
 
 <style>
-  .logo {
+  .hero {
+    font-size: 2rem;
+    font-weight: bold;
+    padding: 2rem 0;
     filter: drop-shadow(0 5px 5px rgba(0, 0, 0)) drop-shadow(0 0 50px rgba(183, 134, 71, 0.5));
   }
 

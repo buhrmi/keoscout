@@ -4,6 +4,8 @@ body {
   --primary: #c2ae7f;
   --bg-primary: #000;
   --bg-primary-active: #ffffff;
+  --color-border: #444;
+  --padding: 1rem;
 }
 
 #app {

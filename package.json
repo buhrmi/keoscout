@@ -8,7 +8,6 @@
     "@sveltejs/vite-plugin-svelte": "^7.2.0",
     "@unocss/preset-icons": "^66.7.5",
     "@unocss/reset": "^66.7.5",
-    "inertiax-core": "^11.0.38",
     "inertiax-svelte": "^11.0.39",
     "inertiax-ui": "^0.0.25",
     "inertiax-vite": "^11.0.16",

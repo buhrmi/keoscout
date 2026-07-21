@@ -3,9 +3,10 @@ import { BROWSER } from 'esm-env'
 import { createAppKit } from '@reown/appkit'
 import { WagmiAdapter } from '@reown/appkit-adapter-wagmi'
 import { arbitrum, mainnet } from '@reown/appkit/networks'
+import { writable, get } from 'svelte/store'
 
 // Only initialize in browser environment
-let appKit: ReturnType<typeof createAppKit> | undefined = undefined
+export const appKit = writable<ReturnType<typeof createAppKit> | undefined>(undefined)
 
 if (BROWSER) {
   const projectId = "e33aa1da8587ce34b08b7945752bbfac"
@@ -19,7 +20,7 @@ if (BROWSER) {
   })
 
   // Initialize AppKit
-  appKit = createAppKit({
+  appKit.set(createAppKit({
     adapters: [wagmiAdapter],
     networks: [arbitrum, mainnet],
     defaultNetwork: arbitrum,
@@ -30,7 +31,14 @@ if (BROWSER) {
       url: 'https://www.keoscout.com',
       icons: ['https://github.com/buhrmi/keoscout/blob/main/public/touch-icon.png?raw=true']
     }
-  })
+  }))
 }
 
-export { appKit }
+export function login() {
+  const $appKit = get(appKit)
+  if ($appKit) {
+    $appKit.open()
+  } else {
+    console.error('AppKit is not initialized yet.')
+  }
+}
