@@ -2,8 +2,8 @@
 # check=error=true
 
 # This Dockerfile is designed for production, not development. Use with Kamal or build'n'run by hand:
-# docker build -t keoscout .
-# docker run -d -p 80:80 -e RAILS_MASTER_KEY=<value from config/master.key> --name keoscout keoscout
+# docker build -t shitcoinswap .
+# docker run -d -p 80:80 -e RAILS_MASTER_KEY=<value from config/master.key> --name shitcoinswap shitcoinswap
 
 # For a containerized dev environment, see Dev Containers: https://guides.rubyonrails.org/getting_started_with_devcontainer.html
 
@@ -16,9 +16,12 @@ WORKDIR /rails
 
 # Install base packages
 RUN apt-get update -qq && \
-    apt-get install --no-install-recommends -y curl libjemalloc2 libvips sqlite3 && \
+    apt-get install --no-install-recommends -y curl unzip libpq-dev libjemalloc2 libvips && \
     ln -s /usr/lib/$(uname -m)-linux-gnu/libjemalloc.so.2 /usr/local/lib/libjemalloc.so && \
     rm -rf /var/lib/apt/lists /var/cache/apt/archives
+
+# Install bun
+RUN curl -fsSL https://bun.sh/install | BUN_INSTALL=/rails bash
 
 # Set production environment variables and enable jemalloc for reduced memory usage and latency.
 ENV RAILS_ENV="production" \
@@ -44,6 +47,10 @@ RUN bundle install && \
     # -j 1 disable parallel compilation to avoid a QEMU bug: https://github.com/rails/bootsnap/issues/495
     bundle exec bootsnap precompile -j 1 --gemfile
 
+# Install node modules
+COPY --link package.json bun.lock ./
+RUN bin/bun install --frozen-lockfile
+
 # Copy application code
 COPY . .
 
@@ -51,11 +58,16 @@ COPY . .
 # -j 1 disable parallel compilation to avoid a QEMU bug: https://github.com/rails/bootsnap/issues/495
 RUN bundle exec bootsnap precompile -j 1 app/ lib/
 
-
+# Build the app
+RUN bin/bun run build
 
 
 # Final stage for app image
 FROM base
+
+# Download and extract the hivemind binary
+RUN curl -fsSL https://github.com/DarthSim/hivemind/releases/download/v1.1.0/hivemind-v1.1.0-linux-amd64.gz | gzip -d > /usr/local/bin/hivemind && \
+    chmod +x /usr/local/bin/hivemind
 
 # Run and own only the runtime files as a non-root user for security
 RUN groupadd --system --gid 1000 rails && \
@@ -69,6 +81,5 @@ COPY --chown=rails:rails --from=build /rails /rails
 # Entrypoint prepares the database.
 ENTRYPOINT ["/rails/bin/docker-entrypoint"]
 
-# Start server via Thruster by default, this can be overwritten at runtime
 EXPOSE 80
-CMD ["./bin/thrust", "./bin/rails", "server"]
+CMD ["hivemind"]
