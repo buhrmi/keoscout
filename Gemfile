@@ -68,3 +68,5 @@ gem "itsi", "~> 0.2.27"
 gem "active_storage_bunny", "~> 1.0"
 
 gem "libsql_activerecord", "~> 0.0.2"
+
+gem "pg", "~> 1.6", group: :production

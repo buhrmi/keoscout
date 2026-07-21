@@ -24,8 +24,8 @@ test:
 # is mounted as a persistent Docker volume in config/deploy.yml.
 production:
   primary:
-    url: <%= ENV["BUNNY_DATABASE_URL"] %>
-    auth_token: <%= ENV["BUNNY_DATABASE_AUTH_TOKEN"] %>
+    <<: *default
+    database: storage/production.sqlite3
   cache:
     <<: *default
     database: storage/production_cache.sqlite3
