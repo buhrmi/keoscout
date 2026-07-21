@@ -66,3 +66,5 @@ gem "omniauth-zalo", "~> 0.1.5"
 gem "itsi", "~> 0.2.27"
 
 gem "active_storage_bunny", "~> 1.0"
+
+gem "libsql_activerecord", "~> 0.0.2"
