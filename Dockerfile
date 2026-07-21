@@ -15,7 +15,9 @@ FROM docker.io/library/ruby:$RUBY_VERSION-slim AS base
 WORKDIR /rails
 
 # Install base packages
-RUN apt-get update -qq && \
+RUN --mount=type=cache,target=/var/cache/apt,sharing=locked \
+    --mount=type=cache,target=/var/lib/apt,sharing=locked \
+    apt-get update -qq && \
     apt-get install --no-install-recommends -y curl unzip libpq-dev libjemalloc2 libvips && \
     ln -s /usr/lib/$(uname -m)-linux-gnu/libjemalloc.so.2 /usr/local/lib/libjemalloc.so && \
     rm -rf /var/lib/apt/lists /var/cache/apt/archives
@@ -34,7 +36,9 @@ ENV RAILS_ENV="production" \
 FROM base AS build
 
 # Install packages needed to build gems
-RUN apt-get update -qq && \
+RUN --mount=type=cache,target=/var/cache/apt,sharing=locked \
+    --mount=type=cache,target=/var/lib/apt,sharing=locked \
+    apt-get update -qq && \
     apt-get install --no-install-recommends -y build-essential git libvips libyaml-dev pkg-config && \
     rm -rf /var/lib/apt/lists /var/cache/apt/archives
 
@@ -42,21 +46,38 @@ RUN apt-get update -qq && \
 COPY vendor/* ./vendor/
 COPY Gemfile Gemfile.lock ./
 
-RUN bundle install && \
-    rm -rf ~/.bundle/ "${BUNDLE_PATH}"/ruby/*/cache "${BUNDLE_PATH}"/ruby/*/bundler/gems/*/.git && \
+RUN --mount=type=cache,target=/root/.bundle/cache,sharing=locked \
+    bundle install && \
+    rm -rf "${BUNDLE_PATH}"/ruby/*/cache "${BUNDLE_PATH}"/ruby/*/bundler/gems/*/.git && \
     # -j 1 disable parallel compilation to avoid a QEMU bug: https://github.com/rails/bootsnap/issues/495
     bundle exec bootsnap precompile -j 1 --gemfile
 
 # Install node modules
 COPY --link package.json bun.lock ./
-RUN bin/bun install --frozen-lockfile
+RUN --mount=type=cache,target=/root/.bun,sharing=locked \
+    bin/bun install --frozen-lockfile
 
-# Copy application code
-COPY . .
+# Copy backend code first (changes less frequently than frontend)
+COPY app/controllers/ app/controllers/
+COPY app/models/ app/models/
+COPY app/helpers/ app/helpers/
+COPY app/jobs/ app/jobs/
+COPY app/mailers/ app/mailers/
+COPY app/views/ app/views/
+COPY config/ config/
+COPY lib/ lib/
+COPY bin/ bin/
+COPY db/ db/
+COPY public/ public/
+COPY Rakefile config.ru ./
 
 # Precompile bootsnap code for faster boot times.
 # -j 1 disable parallel compilation to avoid a QEMU bug: https://github.com/rails/bootsnap/issues/495
 RUN bundle exec bootsnap precompile -j 1 app/ lib/
+
+# Copy frontend code separately (changes most frequently)
+COPY app/frontend/ app/frontend/
+COPY svelte.config.js vite.config.ts package.json bun.lock ./
 
 # Build the app
 RUN bin/bun run build
