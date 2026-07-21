@@ -57,27 +57,12 @@ COPY --link package.json bun.lock ./
 RUN --mount=type=cache,target=/root/.bun,sharing=locked \
     bin/bun install --frozen-lockfile
 
-# Copy backend code first (changes less frequently than frontend)
-COPY app/controllers/ app/controllers/
-COPY app/models/ app/models/
-COPY app/helpers/ app/helpers/
-COPY app/jobs/ app/jobs/
-COPY app/mailers/ app/mailers/
-COPY app/views/ app/views/
-COPY config/ config/
-COPY lib/ lib/
-COPY bin/ bin/
-COPY db/ db/
-COPY public/ public/
-COPY Rakefile config.ru ./
+# Copy application code
+COPY . .
 
 # Precompile bootsnap code for faster boot times.
 # -j 1 disable parallel compilation to avoid a QEMU bug: https://github.com/rails/bootsnap/issues/495
 RUN bundle exec bootsnap precompile -j 1 app/ lib/
-
-# Copy frontend code separately (changes most frequently)
-COPY app/frontend/ app/frontend/
-COPY svelte.config.js vite.config.ts package.json bun.lock ./
 
 # Build the app
 RUN bin/bun run build
