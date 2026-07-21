@@ -3,7 +3,8 @@
     "sourceCodeDir": "app/frontend",
     "watchAdditionalPaths": [
     ],
-    "viteBinPath": "bin/shims/vite"
+    "viteBinPath": "bin/shims/vite",
+    "ssrEntrypoint": "~/entrypoints/inertia.js"
   },
   "development": {
     "autoBuild": true,
