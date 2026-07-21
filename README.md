@@ -2,7 +2,7 @@
 
 # KeoScout
 
-KeoScout is the world's first crypto-native content monetization platform
+KeoScout is the world's first crypto-native talent management platform
 
 ## Features
 
