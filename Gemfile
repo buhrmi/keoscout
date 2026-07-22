@@ -4,8 +4,6 @@ source "https://rubygems.org"
 gem "rails", "~> 8.1.3"
 # Use sqlite3 as the database for Active Record
 gem "sqlite3", ">= 2.1"
-# Use the Puma web server [https://github.com/puma/puma]
-gem "puma", ">= 5.0"
 # Build JSON APIs with ease [https://github.com/rails/jbuilder]
 gem "jbuilder"
 
@@ -53,6 +51,8 @@ end
 
 group :test do
   # Use system testing [https://guides.rubyonrails.org/testing.html#system-testing]
+  # Use the Puma web server [https://github.com/puma/puma]
+  gem "puma", ">= 5.0"
   gem "capybara"
   gem "selenium-webdriver"
 end
@@ -64,9 +64,5 @@ gem "vite_rails", "~> 3.11"
 gem "omniauth-zalo", "~> 0.1.5"
 
 gem "itsi", "~> 0.2.27"
-
-gem "active_storage_bunny", "~> 1.0"
-
-gem "libsql_activerecord", "~> 0.0.2"
-
+gem "aws-sdk-s3", require: false
 gem "pg", "~> 1.6", group: :production

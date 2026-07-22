@@ -15,8 +15,8 @@ FROM docker.io/library/ruby:$RUBY_VERSION-slim AS base
 WORKDIR /rails
 
 # Install base packages
-RUN --mount=type=cache,target=/var/cache/apt,sharing=locked \
-    --mount=type=cache,target=/var/lib/apt,sharing=locked \
+RUN --mount=type=cache,target=/var/cache/apt,sharing=locked,id=apt-cache \
+    --mount=type=cache,target=/var/lib/apt,sharing=locked,id=apt-lib \
     apt-get update -qq && \
     apt-get install --no-install-recommends -y curl unzip libpq-dev libjemalloc2 libvips && \
     ln -s /usr/lib/$(uname -m)-linux-gnu/libjemalloc.so.2 /usr/local/lib/libjemalloc.so && \
@@ -36,8 +36,8 @@ ENV RAILS_ENV="production" \
 FROM base AS build
 
 # Install packages needed to build gems
-RUN --mount=type=cache,target=/var/cache/apt,sharing=locked \
-    --mount=type=cache,target=/var/lib/apt,sharing=locked \
+RUN --mount=type=cache,target=/var/cache/apt,sharing=locked,id=apt-cache \
+    --mount=type=cache,target=/var/lib/apt,sharing=locked,id=apt-lib \
     apt-get update -qq && \
     apt-get install --no-install-recommends -y build-essential git libvips libyaml-dev pkg-config && \
     rm -rf /var/lib/apt/lists /var/cache/apt/archives
@@ -46,7 +46,7 @@ RUN --mount=type=cache,target=/var/cache/apt,sharing=locked \
 COPY vendor/* ./vendor/
 COPY Gemfile Gemfile.lock ./
 
-RUN --mount=type=cache,target=/root/.bundle/cache,sharing=locked \
+RUN --mount=type=cache,target=/root/.bundle/cache,sharing=locked,id=bundle-cache \
     bundle install && \
     rm -rf "${BUNDLE_PATH}"/ruby/*/cache "${BUNDLE_PATH}"/ruby/*/bundler/gems/*/.git && \
     # -j 1 disable parallel compilation to avoid a QEMU bug: https://github.com/rails/bootsnap/issues/495
@@ -54,7 +54,7 @@ RUN --mount=type=cache,target=/root/.bundle/cache,sharing=locked \
 
 # Install node modules
 COPY --link package.json bun.lock ./
-RUN --mount=type=cache,target=/root/.bun,sharing=locked \
+RUN --mount=type=cache,target=/root/.bun,sharing=locked,id=bun-cache \
     bin/bun install --frozen-lockfile
 
 # Copy application code
