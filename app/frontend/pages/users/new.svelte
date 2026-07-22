@@ -4,7 +4,7 @@
   import { slide } from 'svelte/transition';
   import { login } from '~/lib/appkit.ts'
 
-  const { referrer } = $props()
+  const { referrer, host } = $props()
   let percentage = new Tween(15, {
     easing: cubicOut,
     duration: 200
@@ -15,6 +15,22 @@
     document.cookie = `share_percentage=${percentage.current}; path=/; max-age=31536000`
   })
 </script>
+
+<svelte:head>
+  <meta name="description" content="Next-Generation Content Monetization Platform">
+  
+  <!-- Open Graph / Facebook -->
+  <meta property="og:type" content="website" />
+  <meta property="og:title" content="KeoScout" />
+  <meta property="og:description" content="Next-Generation Content Monetization Platform" />
+  <meta property="og:image" content={`${host}/preview.jpg`} />
+
+  <!-- Twitter -->
+  <meta name="twitter:card" content="summary_large_image" />
+  <meta name="twitter:title" content="KeoScout" />
+  <meta name="twitter:description" content="Next-Generation Content Monetization Platform" />
+  <meta name="twitter:image" content={`${host}/preview.jpg`} />
+</svelte:head>
 
 <main>
   <section>
@@ -50,7 +66,7 @@
       </button>
   {:else}
     <div class="card mt-4">
-      Keo is currently invite-only.
+      KeoScout is currently invite-only.
     </div>
   {/if}
   </section>

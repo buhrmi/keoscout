@@ -10,6 +10,7 @@ class ApplicationController < ActionController::Base
 
   inertia_share do
     {
+      host: request.base_url,
       current_user: Current.user.as_json(User::JSON_OPTIONS),
       referrer: session[:scout_id] && User.find_by(id: session[:scout_id]).as_json(only: [ :name ])
     }
