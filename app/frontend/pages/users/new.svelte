@@ -2,11 +2,7 @@
   import { Tween } from 'svelte/motion';
   import { cubicOut } from 'svelte/easing';
   import { slide } from 'svelte/transition';
-  import { appKit } from '~/lib/appkit.ts'
-
-  function connect() {
-    $appKit.open()
-  }
+  import { login } from '~/lib/appkit.ts'
 
   const { referrer } = $props()
   let percentage = new Tween(15, {
@@ -24,14 +20,14 @@
   <section>
   {#if referrer}
   <p>
-    <span class="text-2xl"><strong>{referrer.name}</strong> invited you to shake your ass!</span>
+    <span class="text-2xl"><strong>{referrer.name}</strong> invited you to join KeoScout!</span>
   </p>
   <div class="card mt-4 text-left">
     <div class="flex items-center gap-4">
       <label for="enable_sharing" class="flex-1">
-        <h3>Give back some love</h3>
+        <h3>Share your success</h3>
         <p class="hint">
-          {referrer.name} will receive a percentage of your monetization. You can change this any time.
+          {referrer.name} will receive a percentage of your revenue. You can change this any time.
         </p>
       </label>
       <label class="switch" for="enable_sharing">
@@ -42,14 +38,14 @@
     {#if percentage.target > 0}
       <section transition:slide>
         <div class="flex">
-          <p class="flex-1">Revenue split</p>
+          <p class="flex-1">Revenue share</p>
           <p>{percentage.target}%</p>
         </div>
         <input type="range" min="1" max="100" value={percentage.current} oninput={(e) => percentage.set(parseInt(e.target.value), {duration: 0})} class="w-full mt-2"/>
       </section>
       {/if}
     </div>
-      <button onclick={connect} class="btn mt-8 mb-2">
+      <button onclick={login} class="btn mt-8 mb-2">
         Connect Wallet
       </button>
   {:else}

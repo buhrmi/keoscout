@@ -12,7 +12,7 @@ env = ENV.fetch("APP_ENV") { ENV.fetch("RAILS_ENV", "development") }
 # If more than 1, Itsi will be booted in Cluster mode
 workers ENV.fetch("ITSI_WORKERS") {
   require "etc"
-  env == "development" ? 1 : 0
+  env == "development" ? 1 : nil
 }.to_i
 
 static_assets root_dir: "./public", not_found_behavior: "fallthrough"

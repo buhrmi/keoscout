@@ -33,11 +33,6 @@ $effect(() => $currentUser = current_user)
         <button onclick={login}>Log in</button>
       {/if}
     </menu>
-    {#if !current_user}
-      <p class="pt-4">
-        Crypto-native ass shaking monetization platform.
-      </p>
-    {/if}
   </header>
   
   {@render children()}
