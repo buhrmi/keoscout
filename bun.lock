@@ -4,20 +4,20 @@
   "workspaces": {
     "": {
       "dependencies": {
-        "@iconify/json": "^2.2.486",
+        "@iconify/json": "^2.2.503",
         "@reown/appkit": "^1.8.22",
         "@reown/appkit-adapter-wagmi": "^1.8.22",
-        "@sveltejs/vite-plugin-svelte": "^7.1.2",
-        "@unocss/preset-icons": "^66.7.2",
-        "@unocss/reset": "^66.7.2",
-        "inertiax-core": "^11.0.15",
+        "@sveltejs/vite-plugin-svelte": "^7.2.0",
+        "@unocss/preset-icons": "^66.7.5",
+        "@unocss/reset": "^66.7.5",
         "inertiax-svelte": "^11.0.39",
         "inertiax-ui": "^0.0.25",
-        "inertiax-vite": "^11.0.15",
-        "svelte": "^5.56.3",
+        "inertiax-vite": "^11.0.16",
+        "svelte": "^5.56.7",
         "svelte-preprocess-import-assets": "^1.1.0",
-        "unocss": "^66.7.2",
-        "vite": "^8.0.16",
+        "svelte-sonner": "^1.1.1",
+        "unocss": "^66.7.5",
+        "vite": "^8.1.5",
         "vite-plugin-ruby": "^5.2.2",
       },
     },
@@ -703,6 +703,8 @@
 
     "rolldown": ["rolldown@1.1.5", "", { "dependencies": { "@oxc-project/types": "=0.139.0", "@rolldown/pluginutils": "^1.0.0" }, "optionalDependencies": { "@rolldown/binding-android-arm64": "1.1.5", "@rolldown/binding-darwin-arm64": "1.1.5", "@rolldown/binding-darwin-x64": "1.1.5", "@rolldown/binding-freebsd-x64": "1.1.5", "@rolldown/binding-linux-arm-gnueabihf": "1.1.5", "@rolldown/binding-linux-arm64-gnu": "1.1.5", "@rolldown/binding-linux-arm64-musl": "1.1.5", "@rolldown/binding-linux-ppc64-gnu": "1.1.5", "@rolldown/binding-linux-s390x-gnu": "1.1.5", "@rolldown/binding-linux-x64-gnu": "1.1.5", "@rolldown/binding-linux-x64-musl": "1.1.5", "@rolldown/binding-openharmony-arm64": "1.1.5", "@rolldown/binding-wasm32-wasi": "1.1.5", "@rolldown/binding-win32-arm64-msvc": "1.1.5", "@rolldown/binding-win32-x64-msvc": "1.1.5" }, "bin": { "rolldown": "./bin/cli.mjs" } }, "sha512-t9z29cJjXf/vxQ8dyhCSpt6H6aSwHTk8cT5I3iy6SMXuFpk5mB6PL6XfC8PCwrPTx93udwKUm9HRteAlTGBLiA=="],
 
+    "runed": ["runed@0.28.0", "", { "dependencies": { "esm-env": "^1.0.0" }, "peerDependencies": { "svelte": "^5.7.0" } }, "sha512-k2xx7RuO9hWcdd9f+8JoBeqWtYrm5CALfgpkg2YDB80ds/QE4w0qqu34A7fqiAwiBBSBQOid7TLxwxVC27ymWQ=="],
+
     "safe-stable-stringify": ["safe-stable-stringify@2.5.0", "", {}, "sha512-b3rppTKm9T+PsVCBEOUR46GWI7fdOs00VKZ1+9c1EWDaDMvjQc6tUwuFyIprgGgTcWoVHSKrU8H31ZHA2e0RHA=="],
 
     "semver": ["semver@7.7.2", "", { "bin": { "semver": "bin/semver.js" } }, "sha512-RF0Fw+rO5AMf9MAyaRXI4AV0Ulj5lMHqVxxdSgiVbixSCXoEmmX/jk0CuJw4+3SqroYO9VoUh+HcuJivvtJemA=="],
@@ -728,6 +730,8 @@
     "svelte-parse-markup": ["svelte-parse-markup@0.1.5", "", { "peerDependencies": { "svelte": "^3.0.0 || ^4.0.0 || ^5.0.0-next.1" } }, "sha512-T6mqZrySltPCDwfKXWQ6zehipVLk4GWfH1zCMGgRtLlOIFPuw58ZxVYxVvotMJgJaurKi1i14viB2GIRKXeJTQ=="],
 
     "svelte-preprocess-import-assets": ["svelte-preprocess-import-assets@1.1.0", "", { "dependencies": { "estree-walker": "^3.0.3", "magic-string": "^0.30.5", "svelte-parse-markup": "^0.1.2" }, "peerDependencies": { "svelte": "^3.37.0 || ^4.0.0 || ^5.0.0-next.1" } }, "sha512-pWjoceFcGAG6vUg50JZXfhr5V4amxI2aYbcsn6CJrytcA528NNgaHnvMR1EwJYBIpZEf302I8Pyw0YeEta1zbg=="],
+
+    "svelte-sonner": ["svelte-sonner@1.1.1", "", { "dependencies": { "runed": "^0.28.0" }, "peerDependencies": { "svelte": "^5.0.0" } }, "sha512-5cd3p7wa4cq0NsqslMwdlPb7x1JglEZ/GKrLePWNr5bCxR1nagAVrY01FRFrXfUGs41miLt3C327+8XJo5BzZw=="],
 
     "thread-stream": ["thread-stream@3.2.0", "", { "dependencies": { "real-require": "^0.2.0" } }, "sha512-zLBvqpwr4Esa0kRjcrzGU6zL25lePWaCLMx0RQFrmteozIfeNdaMLpG5U7PeHzvlFkAWaRKA9/KVW4F60iB+qw=="],
 

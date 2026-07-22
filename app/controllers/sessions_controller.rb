@@ -4,11 +4,38 @@ class SessionsController < ApplicationController
   end
 
   def create
+    if request.env["omniauth.auth"].present?
+      create_from_omniauth
+    else
+      create_from_email
+    end
+  end
+
+  def create_from_email
+    user = User.authenticate_by(login_params)
+    if user
+      session[:user_id] = user.id
+      flash[:frame] = "_top"
+      redirect_to dashboard_root_path, notice: "Signed in successfully."
+    else
+      flash[:alert] = "Invalid email or password."
+      redirect_to new_session_path
+    end
+  end
+
+  def create_from_omniauth
     auth = request.env["omniauth.auth"]
+
+    # Only allow new signups via invitation
+    unless Identity.exists?(provider: auth.provider, provider_id: auth.uid) || session[:scout_id].present?
+      flash[:alert] = "An invitation is required to sign up."
+      render layout: false
+      return
+    end
+
     Current.user = Identity.from_omniauth!(auth,
       scout_id: session[:scout_id],
-      share_percentage: cookies[:share_percentage],
-      preferred_currency: preferred_currency_from_request
+      share_percentage: cookies[:share_percentage]
     ).user
 
     session[:user_id] = Current.user.id
@@ -27,16 +54,7 @@ class SessionsController < ApplicationController
 
   private
 
-  def preferred_currency_from_request
-    locale = request.headers["Accept-Language"]&.scan(/[a-z]{2}/i)&.first&.downcase
-    case locale
-    when "vi" then "VND"
-    when "ja" then "JPY"
-    when "ko" then "KRW"
-    when "zh" then "CNY"
-    when "de", "fr", "it", "es", "nl", "pt" then "EUR"
-    when "gb" then "GBP"
-    else "USD"
-    end
+  def login_params
+    params.require(:user).permit(:email, :password)
   end
 end

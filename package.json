@@ -13,11 +13,12 @@
     "inertiax-vite": "^11.0.16",
     "svelte": "^5.56.7",
     "svelte-preprocess-import-assets": "^1.1.0",
+    "svelte-sonner": "^1.1.1",
     "unocss": "^66.7.5",
     "vite": "^8.1.5",
     "vite-plugin-ruby": "^5.2.2"
   },
   "scripts": {
-		"build": "vite build && vite build --ssr"
-	}
+    "build": "vite build && vite build --ssr"
+  }
 }

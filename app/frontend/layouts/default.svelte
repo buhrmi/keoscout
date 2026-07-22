@@ -1,8 +1,9 @@
 <script>
 import { modal } from 'inertiax-ui'
-import 'inertiax-ui/modal.css'
+import { Toaster } from 'svelte-sonner'
+import '~/assets//modal.css'
 import { currentUser } from '~/stores/user.svelte.js'
-import { login } from '~/lib/appkit.ts'
+import { login } from '~/lib/auth.js'
 
 const {
   current_user,
@@ -42,7 +43,7 @@ $effect(() => $currentUser = current_user)
       <section>
         <p class="text-sm text-gray-500">
           &copy; {new Date().getFullYear()} Keo Platforms.
-          <a href="/terms" class="subtle">Terms of Service</a>
+          <a href="/terms">Terms of Service</a>
         </p>
       </section>
     </footer>
@@ -85,6 +86,8 @@ $effect(() => $currentUser = current_user)
     </nav>
   {/if}
 </div>
+
+<Toaster theme="dark" richColors position="top-right" />
 
 <style>
   nav menu {

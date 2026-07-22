@@ -1,4 +1,18 @@
-export function login(provider) {
+import { createModal } from 'inertiax-ui'
+
+export function login() {
+  const close = createModal({
+    src: '/session/new',
+  })
+}
+
+export function signup() {
+  const close = createModal({
+    src: '/users/new',
+  })
+}
+
+export function authenticate(provider) {
   if (import.meta.env.MODE == 'production') return alert("Coming soon")
   
   const width = 500;

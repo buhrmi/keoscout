@@ -5,6 +5,14 @@ document.addEventListener("inertia:start", () => {
   document.body.classList.add("loading")
 })
 
+import { toast } from 'svelte-sonner'
+
+document.addEventListener('inertia:flash', (event) => {
+  const flash = event.detail.flash
+  if (flash.notice) toast.success(flash.notice)
+  if (flash.alert) toast.error(flash.alert)
+})
+
 // remove .loading class from body when inertia finishes loading
 document.addEventListener("inertia:finish", () => {
   document.body.classList.remove("loading")

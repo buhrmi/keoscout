@@ -11,7 +11,6 @@ class Identity < ApplicationRecord
         email: auth_hash.info.email,
         name: auth_hash.info.name,
         password: SecureRandom.base58(10),
-        preferred_currency: params.delete(:preferred_currency),
         **params
       )
     end.tap do |identity|

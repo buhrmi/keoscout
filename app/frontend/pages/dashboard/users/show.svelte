@@ -15,7 +15,7 @@
       <p>
         Create your first post to start earning.
       </p>
-      <a use:modal href="/dashboard/posts/new" class="btn w-full mt-4">
+      <a use:modal href="/dashboard/posts/new" class="btn primary w-full mt-4">
         Create Post
       </a>
     </div>

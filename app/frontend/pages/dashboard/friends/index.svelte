@@ -9,7 +9,7 @@
       <p>
         Whenever your friends earn money on Keo, you'll get a cut.
       </p>
-      <a use:modal href="/dashboard/friends/new" class="btn mt-4">
+      <a use:modal href="/dashboard/friends/new" class="btn primary mt-4">
         Invite friends
       </a>
     </div>
