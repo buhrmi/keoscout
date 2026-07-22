@@ -6,19 +6,36 @@ body {
   --bg-primary-active: #ffffff;
   --color-border: #444;
   --padding: 1rem;
+  @media (min-width: 600px) {
+    --padding: 2rem;
+  }
 }
 
 #app {
-  max-width: 800px;
-  margin: 0 auto;
+  display: grid;
+  grid-template-columns: 1fr minmax(0, 800px) 1fr;
+  min-height: 100dvh;
+}
+
+#app::before,
+#app::after {
+  content: '';
+  background:
+    radial-gradient(circle, rgba(255,255,255,0.1) 1px, transparent 1px);
+  background-size: 12px 12px;
+}
+
+#app::before { grid-column: 1; grid-row: 1; }
+#app::after  { grid-column: 3; grid-row: 1; }
+
+#app > .layout {
+  grid-column: 2;
+  grid-row: 1;
+  min-height: 100dvh;
   @media (min-width: 600px) {
     border-left: 1px solid #333;
     border-right: 1px solid #333;
   }
-}
-
-#app > .layout {
-  min-height: 100dvh;
 }
 
 .layout,
@@ -59,16 +76,16 @@ main > section,
 footer > section,
 nav > section {
   display: grid;
-  grid-template-columns: 1rem auto 1rem;
+  grid-template-columns: var(--padding) auto var(--padding);
   border-bottom: 1px solid #444;
   > * {
     grid-column: 2;
   }
   > *:first-child {
-    margin-top: 1rem;
+    margin-top: var(--padding);
   }
   > *:last-child {
-    margin-bottom: 1rem;
+    margin-bottom: var(--padding);
   }
   > .full {
     grid-column: 1 / -1;

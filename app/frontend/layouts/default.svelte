@@ -97,6 +97,8 @@ $effect(() => $currentUser = current_user)
   header {
     border-bottom: 1px solid var(--color-border);
     padding: var(--padding);
+    background: #0003;
+    backdrop-filter: blur(10px);
     menu {
       display: flex;
       justify-content: space-between;
