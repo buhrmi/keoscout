@@ -11,7 +11,6 @@ class UsersController < InertiaController
   def create
     user = User.create!(create_params)
     session[:user_id] = user.id
-    flash[:frame] = "_top"
     redirect_to dashboard_root_path, notice: "Account created successfully."
   end
 

@@ -1,47 +1,53 @@
-# Chat + DMs + Paywalled Posts — Implementation Plan
+# Chat + DMs + Paywalled Posts — Implementation Plan (Stripe Edition)
 
 ## Overview
 
-Add real-time chat/DMs with offline support, media uploads to Bunny CDN, and a "promote to paywalled post" feature. Media is stored once on Bunny and referenced by both chat messages and posts.
+This document outlines the revised technical architecture and implementation roadmap for introducing real-time chat/DMs, offline media handling via Bunny CDN, Web Push notifications, and a "promote to paywalled post" feature. 
+
+This updated plan removes Solana in favor of **Stripe** for fiat monetization (Checkout Sessions + Webhooks), optimizes client-side image blurring to preserve web server performance, tightens CDN token TTLs for better access control, and records full transaction history for accounting precision.
 
 ---
 
 ## Architecture Summary
 
+
 ```
+
 ┌──────────────────────────────────────────────────┐
-│                    Bunny CDN                       │
+│                    Bunny CDN                     │
 │  ┌──────────────┐  ┌───────────────────────────┐  │
-│  │ Storage Zone  │  │     Stream Library        │  │
-│  │  (images)     │  │  (videos, transcoded)     │  │
+│  │ Storage Zone │  │     Stream Library        │  │
+│  │  (images)    │  │  (videos, transcoded)     │  │
 │  └──────┬───────┘  └──────────┬────────────────┘  │
 │         │                     │                    │
 │  ┌──────┴─────────────────────┴────────────────┐  │
 │  │    Pull Zone (cdn.keoscout.com)              │  │
-│  │    • Token-protected originals               │  │
+│  │    • Token-protected originals (15m TTL)     │  │
 │  │    • Public blurred previews                 │  │
 │  └──────────────────────────────────────────────┘  │
 └──────────────────────────────────────────────────┘
-         ▲                              ▲
-         │ Reference URLs               │
-         │                              │
-   ┌─────┴──────┐              ┌───────┴──────┐
-   │  Message    │   promote    │    Post       │
-   │  (chat DM)  │──────────────│  (paywalled)  │
-   └─────┬──────┘              └───────┬──────┘
-         │                            │
-         ▼                            ▼
-   Action Cable               Token-gated view
-   (SolidCable)               (PostPurchase check)
-         │
-         ▼
-   IndexedDB (Dexie.js)
-   ┌─────────────────────┐
-   │ Offline queue        │
-   │ Pending messages     │
-   │ Cached conversations │
-   └─────────────────────┘
+▲                              ▲
+│ Reference URLs               │
+│                              │
+┌─────┴──────┐              ┌───────┴──────┐
+│  Message   │   promote    │    Post      │
+│  (chat DM) │──────────────│  (paywalled) │
+└─────┬──────┘              └───────┬──────┘
+│                             │
+▼                             ▼
+Action Cable              Stripe Checkout Session
+(SolidCable)                & Webhook Fulfillment
+│                             │
+▼                             ▼
+IndexedDB (Dexie.js)        PostPurchase (verified)
+┌─────────────────────┐
+│ Offline queue       │
+│ Pending messages    │
+│ Cached conversations│
+└─────────────────────┘
+
 ```
+
 
 ---
 
@@ -50,87 +56,154 @@ Add real-time chat/DMs with offline support, media uploads to Bunny CDN, and a "
 ### 1.1 Database Migrations
 
 #### `CreateConversations`
-
 ```ruby
-create_table :conversations do |t|
-  t.string :conversation_type, null: false  # "dm" or "group"
-  t.string :title                          # for group chats
-  t.timestamps
+# db/migrate/xxx_create_conversations.rb
+class CreateConversations < ActiveRecord::Migration[7.1]
+  def change
+    create_table :conversations do |t|
+      t.string :conversation_type, null: false, default: "dm" # "dm" or "group"
+      t.string :title
+      t.timestamps
+    end
+  end
 end
+
 ```
 
 #### `CreateConversationParticipants`
 
 ```ruby
-create_table :conversation_participants do |t|
-  t.references :user, null: false
-  t.references :conversation, null: false
-  t.datetime :last_read_at
-  t.timestamps
+# db/migrate/xxx_create_conversation_participants.rb
+class CreateConversationParticipants < ActiveRecord::Migration[7.1]
+  def change
+    create_table :conversation_participants do |t|
+      t.references :user, null: false, foreign_key: true
+      t.references :conversation, null: false, foreign_key: true
+      t.datetime :last_read_at
+      t.timestamps
+    end
+
+    add_index :conversation_participants, [:user_id, :conversation_id], unique: true
+  end
 end
 
-add_index :conversation_participants, [:user_id, :conversation_id], unique: true
 ```
 
 #### `CreateMessages`
 
 ```ruby
-create_table :messages do |t|
-  t.references :conversation, null: false
-  t.references :user, null: false
-  t.text :content                           # nullable — for media-only messages
-  t.json :attachments, default: []          # array of attachment objects
-  t.datetime :created_at, null: false
+# db/migrate/xxx_create_messages.rb
+class CreateMessages < ActiveRecord::Migration[7.1]
+  def change
+    create_table :messages do |t|
+      t.references :conversation, null: false, foreign_key: true
+      t.references :user, null: false, foreign_key: true
+      t.text :content                           # nullable — for media-only messages
+      t.json :attachments, default: []          # array of attachment objects
+      t.timestamps
+    end
+
+    add_index :messages, [:conversation_id, :created_at]
+  end
 end
 
-add_index :messages, [:conversation_id, :created_at]
 ```
 
 #### `CreatePosts`
 
 ```ruby
-create_table :posts do |t|
-  t.references :user, null: false
-  t.string :title
-  t.text :description
-  t.json :media_urls, default: []           # same structure as message attachments
-  t.references :source_message,             # which chat message this came from
-               foreign_key: { to_table: :messages }, null: true
-  t.boolean :paywalled, default: false
-  t.decimal :price_usd, precision: 10, scale: 2
-  t.timestamps
+# db/migrate/xxx_create_posts.rb
+class CreatePosts < ActiveRecord::Migration[7.1]
+  def change
+    create_table :posts do |t|
+      t.references :user, null: false, foreign_key: true
+      t.string :title
+      t.text :description
+      t.json :media_urls, default: []           # array of attachment objects
+      t.references :source_message, foreign_key: { to_table: :messages }, null: true
+      t.boolean :paywalled, default: false
+      t.integer :price_cents, default: 0, null: false
+      t.string :currency, default: "usd", null: false
+      t.timestamps
+    end
+  end
 end
+
 ```
 
-#### `CreatePostPurchases`
+#### `CreatePostPurchases` (Stripe Edition)
 
 ```ruby
-create_table :post_purchases do |t|
-  t.references :user, null: false
-  t.references :post, null: false
-  t.string :tx_signature                   # Solana transaction signature
-  t.timestamps
+# db/migrate/xxx_create_post_purchases.rb
+class CreatePostPurchases < ActiveRecord::Migration[7.1]
+  def change
+    create_table :post_purchases do |t|
+      t.references :user, null: false, foreign_key: true
+      t.references :post, null: false, foreign_key: true
+      t.string :stripe_checkout_session_id, null: false
+      t.string :stripe_payment_intent_id
+      t.integer :amount_cents, null: false
+      t.string :currency, default: "usd", null: false
+      t.string :status, default: "completed", null: false
+      t.timestamps
+    end
+
+    add_index :post_purchases, [:user_id, :post_id], unique: true
+    add_index :post_purchases, :stripe_checkout_session_id, unique: true
+    add_index :post_purchases, :stripe_payment_intent_id
+  end
 end
 
-add_index :post_purchases, [:user_id, :post_id], unique: true
 ```
+
+#### `CreatePushSubscriptions`
+
+```ruby
+# db/migrate/xxx_create_push_subscriptions.rb
+class CreatePushSubscriptions < ActiveRecord::Migration[7.1]
+  def change
+    create_table :push_subscriptions do |t|
+      t.references :user, null: false, foreign_key: true
+      t.string :endpoint, null: false
+      t.string :p256dh_key, null: false
+      t.string :auth_key, null: false
+      t.string :user_agent
+      t.timestamps
+    end
+
+    add_index :push_subscriptions, :endpoint, unique: true
+  end
+end
+
+```
+
+---
 
 ### 1.2 Models
 
 ```ruby
 # app/models/conversation.rb
 class Conversation < ApplicationRecord
-  has_many :participants, class_name: "ConversationParticipant"
+  has_many :participants, class_name: "ConversationParticipant", dependent: :destroy
   has_many :users, through: :participants
-  has_many :messages, -> { order(created_at: :asc) }
+  has_many :messages, -> { order(created_at: :asc) }, dependent: :destroy
 
   def self.between(user1, user2)
-    dm = where(conversation_type: "dm")
-         .joins(:participants)
-         .where(conversation_participants: { user_id: [user1.id, user2.id] })
-         .group(:id)
-         .having("COUNT(*) = 2")
-         .first
+    where(conversation_type: "dm")
+      .joins(:participants)
+      .where(conversation_participants: { user_id: [user1.id, user2.id] })
+      .group(:id)
+      .having("COUNT(*) = 2")
+      .first
+  end
+
+  def self.create_dm(user1, user2)
+    transaction do
+      conv = create!(conversation_type: "dm")
+      conv.participants.create!(user: user1)
+      conv.participants.create!(user: user2)
+      conv
+    end
   end
 end
 
@@ -138,18 +211,10 @@ end
 class Message < ApplicationRecord
   belongs_to :conversation
   belongs_to :user
-  has_one :promoted_post, class_name: "Post",
-          foreign_key: :source_message_id, dependent: :nullify
+  has_one :promoted_post, class_name: "Post", foreign_key: :source_message_id, dependent: :nullify
 
   after_create_commit :broadcast_message
-
-  def attachment_urls_for_client
-    attachments.map { |a| a.slice("blurred_url", "thumbnail_url", "type") }
-  end
-
-  def signed_attachment_urls
-    # Replaced with signed Bunny URLs after payment verification
-  end
+  after_create_commit :notify_recipients
 
   private
 
@@ -161,24 +226,57 @@ class Message < ApplicationRecord
       locals: { message: self }
     )
   end
+
+  def notify_recipients
+    conversation.users.where.not(id: user_id).find_each do |recipient|
+      PushNotificationService.send_message_notification(
+        message: self,
+        recipient: recipient
+      )
+    end
+  end
 end
 
 # app/models/post.rb
 class Post < ApplicationRecord
   belongs_to :user
   belongs_to :source_message, class_name: "Message", optional: true
-  has_many :purchases, class_name: "PostPurchase"
+  has_many :purchases, class_name: "PostPurchase", dependent: :destroy
 
   def paid_by?(user)
     return false unless user
-    return true if user == self.user  # creator always has access
-    purchases.exists?(user_id: user.id)
+    return true if user_id == user.id # Creator always has access
+
+    purchases.exists?(user_id: user.id, status: "completed")
   end
 
-  def signed_media_urls(expires_in: 1.hour)
-    # Generate Bunny token-authenticated URLs
+  def price_in_dollars
+    price_cents / 100.0
+  end
+
+  def signed_media_urls(expires_in: 15.minutes)
+    token_key = Rails.application.credentials.bunny.storage.token_key
+    return media_urls if token_key.blank?
+
+    expires = (Time.current + expires_in).to_i
+
+    media_urls.map do |media|
+      url = "#{BunnyUploadService.cdn_base_url}/#{media['original_key']}"
+      token = BunnyTokenSigner.sign(url: url, expires: expires, key: token_key)
+      media.merge("url" => "#{url}?token=#{token}")
+    end
   end
 end
+
+# app/models/post_purchase.rb
+class PostPurchase < ApplicationRecord
+  belongs_to :user
+  belongs_to :post
+
+  validates :stripe_checkout_session_id, presence: true, uniqueness: true
+  validates :amount_cents, presence: true
+end
+
 ```
 
 ---
@@ -197,23 +295,22 @@ class ChatChannel < ApplicationCable::Channel
 
   def speak(data)
     conversation = Current.user.conversations.find(data["conversation_id"])
-    message = conversation.messages.create!(
+    conversation.messages.create!(
       user: Current.user,
       content: data["content"],
       attachments: data["attachments"] || []
     )
-    # after_create_commit broadcasts automatically
   end
 
   def read(data)
-    participant = Current.user.participants
-                    .find_by!(conversation_id: data["conversation_id"])
+    participant = Current.user.conversation_participants.find_by!(conversation_id: data["conversation_id"])
     participant.update!(last_read_at: Time.current)
   end
 end
+
 ```
 
-### 2.2 Controllers (Inertia)
+### 2.2 Conversations Controller (Inertia)
 
 ```ruby
 # app/controllers/dashboard/conversations_controller.rb
@@ -227,53 +324,32 @@ module Dashboard
 
     def show
       @conversation = Current.user.conversations.find(params[:id])
+      Current.user.update(active_conversation_id: @conversation.id)
       @messages = @conversation.messages.includes(:user).page(params[:page])
     end
 
     def create
-      # Find or create DM between current_user and recipient
       recipient = User.find(params[:user_id])
       @conversation = Conversation.between(Current.user, recipient) ||
                       Conversation.create_dm(Current.user, recipient)
+      redirect_to dashboard_conversation_path(@conversation)
     end
   end
 end
-```
 
-### 2.3 Action Cable Client (Svelte)
-
-```js
-// app/frontend/lib/cable.ts
-import { createConsumer } from "@rails/actioncable"
-
-let consumer: ReturnType<typeof createConsumer> | null = null
-
-export function getConsumer() {
-  if (!consumer) {
-    consumer = createConsumer("/cable")
-  }
-  return consumer
-}
 ```
 
 ---
 
 ## Phase 3: Offline Support (IndexedDB + Dexie.js)
 
-### 3.1 New Dependencies
-
-```bash
-npm add dexie @rails/actioncable
-```
-
-### 3.2 Dexie Schema
+### 3.1 Dexie Schema (`app/frontend/lib/db.ts`)
 
 ```ts
-// app/frontend/lib/db.ts
 import Dexie, { type EntityTable } from "dexie"
 
 interface CachedMessage {
-  id: number | string        // server ID or local UUID for pending
+  id: number | string
   conversationId: number
   userId: number
   content: string | null
@@ -309,12 +385,12 @@ db.version(1).stores({
 
 export { db }
 export type { CachedMessage, CachedConversation }
+
 ```
 
-### 3.3 Svelte Rune Store
+### 3.2 Svelte Rune Store (`app/frontend/stores/chat.svelte.ts`)
 
 ```ts
-// app/frontend/stores/chat.svelte.ts
 import { db, type CachedMessage } from "~/lib/db"
 import { getConsumer } from "~/lib/cable"
 
@@ -324,12 +400,10 @@ class ChatStore {
   private pendingSync = $state<Set<string>>(new Set())
 
   constructor() {
-    // Monitor network status
     window.addEventListener("online", () => this.syncPending())
     window.addEventListener("offline", () => this.online = false)
   }
 
-  // Load conversation from IndexedDB first, then sync from server
   async loadConversation(id: number) {
     const cached = await db.messages
       .where("conversationId").equals(id)
@@ -337,7 +411,6 @@ class ChatStore {
     
     this.conversations.set(id, cached)
     
-    // Subscribe to Action Cable
     getConsumer().subscriptions.create(
       { channel: "ChatChannel", conversation_id: id },
       {
@@ -346,26 +419,23 @@ class ChatStore {
     )
   }
 
-  // Send message (optimistic)
   async sendMessage(conversationId: number, content: string, files?: File[]) {
     const localId = crypto.randomUUID()
     const message: CachedMessage = {
       id: localId,
       conversationId,
-      userId: getCurrentUserId(),
+      userId: window.currentUserId,
       content,
       attachmentUrls: [],
-      status: this.online ? "pending" : "pending",
+      status: "pending",
       createdAt: new Date(),
       pendingAttachments: files?.map(f => ({ localBlob: f, type: f.type })),
     }
     
-    // Optimistic insert
     await db.messages.add(message)
     this.upsertMessage(conversationId, message)
 
     if (this.online) {
-      // Upload files to Bunny first, then send message
       await this.uploadAndSend(message)
     } else {
       this.pendingSync.add(localId as string)
@@ -373,9 +443,9 @@ class ChatStore {
   }
 
   private async uploadAndSend(message: CachedMessage) {
-    // 1. Upload files to Bunny (see Phase 4)
-    // 2. POST to Rails /messages
-    // 3. Update status to "sent"
+    // 1. Upload media files to Bunny
+    // 2. Submit to Rails via Action Cable / HTTP
+    // 3. Mark status = "sent" in Dexie
   }
 
   private async syncPending() {
@@ -404,49 +474,41 @@ class ChatStore {
 }
 
 export const chatStore = new ChatStore()
+
 ```
-
-### 3.4 Offline Strategy Summary
-
-| Layer | Mechanism |
-|---|---|
-| **Read messages offline** | IndexedDB mirrors server state — conversations load from local cache first |
-| **Send messages offline** | Queued in IndexedDB with `status: pending`, synced on reconnect |
-| **Reconnect sync** | `navigator.onLine` listener + manual retry on failure |
-| **App shell offline** | PWA Service Worker (already scaffolded) caches app shell |
-| **Ordering** | Messages sorted by `createdAt` from server timestamp; pending messages get server timestamp on sync, then re-sorted |
 
 ---
 
-## Phase 4: Bunny CDN Uploads
+## Phase 4: Bunny CDN Uploads & Client-Side Canvas Blurring
 
-### 4.1 Bunny Setup Checklist
+### 4.1 Client-Side Fast Blurring (`app/frontend/lib/blur.ts`)
 
-- [ ] Create **Bunny Storage Zone** (S3-compatible, region: nearest)
-  - [ ] Set password for authenticated access
-  - [ ] Note: API key + Storage Zone name + password
-- [ ] Create **Bunny Stream Library** (for video transcoding)
-  - [ ] Note: Library ID + API key
-- [ ] Create **Pull Zone** pointed at Storage Zone
-  - [ ] Enable **Token Authentication** (generate signing key)
-  - [ ] Set custom hostname (e.g., `cdn.keoscout.com`)
-- [ ] Add credentials to Rails: `rails credentials:edit`
+To protect Rails web processes from CPU heavy workloads, image degradation is computed via the browser's Canvas API before uploading to Bunny CDN.
 
-```yaml
-bunny:
-  storage:
-    api_key: "xxx"
-    zone_name: "keoscout-media"
-    password: "xxx"
-    base_url: "https://storage.bunnycdn.com"
-    cdn_url: "https://cdn.keoscout.com"
-    token_key: "xxx"           # Pull Zone token signing key
-  stream:
-    api_key: "xxx"
-    library_id: "12345"
+```ts
+export async function generateBlurredImageDataUrl(file: File): Promise<string> {
+  return new Promise((resolve, reject) => {
+    const img = new Image()
+    img.onload = () => {
+      const canvas = document.createElement("canvas")
+      // Downscale to 32x32 to guarantee irreversible information loss
+      canvas.width = 32
+      canvas.height = 32
+      const ctx = canvas.getContext("2d")
+      if (!ctx) return reject("Canvas context unavailable")
+
+      ctx.filter = "blur(4px)"
+      ctx.drawImage(img, 0, 0, 32, 32)
+      resolve(canvas.toDataURL("image/jpeg", 0.3))
+    }
+    img.onerror = reject
+    img.src = URL.createObjectURL(file)
+  })
+}
+
 ```
 
-### 4.2 Rails Upload Service
+### 4.2 Rails Bunny Upload Service
 
 ```ruby
 # app/services/bunny_upload_service.rb
@@ -455,16 +517,10 @@ class BunnyUploadService
   ZONE_NAME = Rails.application.credentials.bunny.storage.zone_name
   PASSWORD = Rails.application.credentials.bunny.storage.password
 
-  class Error < StandardError; end
-
   def self.generate_signed_upload_url(filename:, content_type:, user_id:)
     path = "uploads/#{user_id}/#{SecureRandom.uuid}/#{filename}"
-    expiry = (Time.now + 30.minutes).to_i
-
     url = "#{BUNNY_STORAGE_URL}/#{ZONE_NAME}/#{path}"
     
-    # Bunny Storage uses AccessKey auth header
-    # Return the URL + headers needed for direct upload
     {
       upload_url: url,
       public_cdn_url: "#{cdn_base_url}/#{path}",
@@ -473,95 +529,17 @@ class BunnyUploadService
         "Content-Type" => content_type,
       },
       path: path,
-      expires_at: expiry,
     }
-  end
-
-  def self.generate_blurred_filename(original_path)
-    dir = File.dirname(original_path)
-    ext = File.extname(original_path)
-    base = File.basename(original_path, ext)
-    "#{dir}/blurred_#{base}.jpg"
   end
 
   def self.cdn_base_url
     Rails.application.credentials.bunny.storage.cdn_url
   end
-
-  # Bunny Stream: Create video and return upload URL
-  def self.create_video(title:, user_id:)
-    library_id = Rails.application.credentials.bunny.stream.library_id
-    api_key = Rails.application.credentials.bunny.stream.api_key
-
-    response = HTTParty.post(
-      "https://video.bunnycdn.com/library/#{library_id}/videos",
-      headers: {
-        "AccessKey" => api_key,
-        "Content-Type" => "application/json",
-      },
-      body: { title: title }.to_json
-    )
-
-    raise Error, "Failed to create video: #{response.body}" unless response.success?
-
-    data = JSON.parse(response.body)
-    {
-      video_id: data["guid"],
-      upload_url: nil,  # Fetch upload URL separately
-    }
-  end
 end
+
 ```
 
-### 4.3 Server-Side Blurring
-
-```ruby
-# app/services/media_blur_service.rb
-class MediaBlurService
-  require "image_processing/mini_magick"
-
-  # Destructively blur so the original cannot be recovered
-  def self.blur_image(source_path)
-    processed = ImageProcessing::MiniMagick
-      .source(source_path)
-      .resize_to_limit(400, 400)       # Downscale → information loss
-      .blur("0x50")                    # Gaussian blur σ=50
-      .quality(10)                     # Heavy JPEG compression
-      .call
-
-    output_path = BunnyUploadService.generate_blurred_filename(source_path)
-    # Upload processed result to Bunny as public file
-    upload_blurred(processed.path, output_path)
-
-    output_path
-  end
-
-  def self.blur_video_frame(video_id)
-    # Bunny Stream generates thumbnails automatically.
-    # Grab the generated thumbnail, blur it, and re-upload as preview.
-    # Never serve a blurred video stream — motion leaks information.
-    library_id = Rails.application.credentials.bunny.stream.library_id
-    thumbnail_url = "https://#{library_id}.b-cdn.net/#{video_id}/thumbnail.jpg"
-    
-    tempfile = Down.download(thumbnail_url)
-    blur_image(tempfile.path)
-  end
-
-  def self.upload_blurred(file_path, destination_path)
-    url = "#{BunnyUploadService::BUNNY_STORAGE_URL}/#{BunnyUploadService::ZONE_NAME}/#{destination_path}"
-    HTTParty.put(
-      url,
-      headers: {
-        "AccessKey" => BunnyUploadService::PASSWORD,
-        "Content-Type" => "image/jpeg",
-      },
-      body: File.binread(file_path),
-    )
-  end
-end
-```
-
-### 4.4 Client-Side Upload Endpoint
+### 4.3 Upload Controller
 
 ```ruby
 # app/controllers/uploads_controller.rb
@@ -572,143 +550,60 @@ class UploadsController < ApplicationController
     result = BunnyUploadService.generate_signed_upload_url(
       filename: params[:filename],
       content_type: params[:content_type],
-      user_id: Current.user.id,
+      user_id: Current.user.id
     )
 
-    render json: {
-      upload_url: result[:upload_url],
-      public_cdn_url: result[:public_cdn_url],
-      headers: result[:headers],
-      blurred_key: BunnyUploadService.generate_blurred_filename(result[:path]),
-    }
-  end
-
-  # Called after client finishes uploading to Bunny
-  def complete
-    # 1. Fetch the uploaded file from Bunny
-    # 2. Generate blurred version server-side
-    # 3. Upload blurred version back to Bunny (public)
-    # 4. Return both URLs
-
-    blurred_path = MediaBlurService.blur_image_via_bunny(params[:original_key])
-
-    render json: {
-      original_key: params[:original_key],
-      blurred_url: "#{BunnyUploadService.cdn_base_url}/#{blurred_path}",
-    }
+    render json: result
   end
 end
-```
 
-### 4.5 Upload Flow (Svelte Side)
-
-```ts
-// app/frontend/lib/upload.ts
-interface UploadResult {
-  originalKey: string
-  blurredUrl: string
-  type: "image" | "video"
-  thumbnailUrl: string
-}
-
-async function uploadFile(file: File): Promise<UploadResult> {
-  // 1. Get signed URL from Rails
-  const signResp = await fetch("/uploads/sign", {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({
-      filename: file.name,
-      content_type: file.type,
-    }),
-  })
-  const { upload_url, public_cdn_url, headers, blurred_key } = await signResp.json()
-
-  // 2. Upload directly to Bunny
-  await fetch(upload_url, {
-    method: "PUT",
-    headers: { ...headers },
-    body: file,
-  })
-
-  // 3. Tell Rails to generate blurred version
-  const completeResp = await fetch("/uploads/complete", {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ original_key: public_cdn_url }),
-  })
-  const { original_key, blurred_url } = await completeResp.json()
-
-  return {
-    originalKey: original_key,
-    blurredUrl: blurred_url,
-    type: file.type.startsWith("video/") ? "video" : "image",
-    thumbnailUrl: blurred_url,
-  }
-}
-
-export { uploadFile }
-export type { UploadResult }
 ```
 
 ---
 
 ## Phase 5: "Promote to Post" Feature
 
-### 5.1 Backend
-
-Add to `Dashboard::PostsController`:
+### 5.1 Posts Controller
 
 ```ruby
-# POST /dashboard/posts
-def create
-  @post = Current.user.posts.create!(
-    title: params[:title],
-    description: params[:description],
-    media_urls: params[:media_urls],         # Same URLs from the message
-    source_message_id: params[:source_message_id],
-    paywalled: params[:paywalled] || false,
-    price_usd: params[:price_usd],
-  )
+# app/controllers/dashboard/posts_controller.rb
+module Dashboard
+  class PostsController < BaseController
+    def create
+      @post = Current.user.posts.create!(
+        title: params[:title],
+        description: params[:description],
+        media_urls: params[:media_urls],
+        source_message_id: params[:source_message_id],
+        paywalled: params[:paywalled] || false,
+        price_cents: (params[:price_usd].to_f * 100).to_i,
+        currency: params[:currency] || "usd"
+      )
 
-  redirect_to dashboard_post_path(@post)
-end
+      redirect_to dashboard_post_path(@post)
+    end
 
-# GET /dashboard/posts/:id
-def show
-  @post = Post.find(params[:id])
+    def show
+      @post = Post.find(params[:id])
 
-  if @post.paywalled? && !@post.paid_by?(Current.user)
-    # Show blurred version — media URLs are the public blurred urls
-    render "posts/show_blurred"
-  else
-    # Generate signed Bunny URLs for full access (1-hour expiry)
-    @media_urls = @post.signed_media_urls(expires_in: 1.hour)
-    render "posts/show"
+      if @post.paywalled? && !@post.paid_by?(Current.user)
+        render "posts/show_blurred"
+      else
+        @media_urls = @post.signed_media_urls(expires_in: 15.minutes)
+        render "posts/show"
+      end
+    end
   end
 end
+
 ```
 
-### 5.2 Post Model — Token Signing
+### 5.2 Bunny Token Signer Service
 
 ```ruby
-# app/models/post.rb (addition)
-def signed_media_urls(expires_in: 1.hour)
-  token_key = Rails.application.credentials.bunny.storage.token_key
-  return media_urls if token_key.blank?  # fallback for dev
-
-  expires = (Time.now + expires_in).to_i
-
-  media_urls.map do |media|
-    url = "#{BunnyUploadService.cdn_base_url}/#{media["original_key"]}"
-    token = BunnyTokenSigner.sign(url: url, expires: expires, key: token_key)
-    media.merge("url" => "#{url}?token=#{token}")
-  end
-end
-
 # app/services/bunny_token_signer.rb
 class BunnyTokenSigner
   def self.sign(url:, expires:, key:)
-    # Bunny token auth uses: MD5(key + path + expires) or SHA256 depending on zone config
     uri = URI.parse(url)
     path = uri.path
     token_string = "#{key}#{path}#{expires}"
@@ -716,119 +611,114 @@ class BunnyTokenSigner
     "expires=#{expires}&token_signature=#{token}"
   end
 end
-```
 
-### 5.3 Svelte — "Create Post" Action on Chat Media
-
-```svelte
-<!-- In chat message bubble, for messages with attachments -->
-{#if message.attachments?.length > 0}
-  <div class="message-media">
-    {#each message.attachments as attachment}
-      <img src={attachment.blurredUrl} alt="Chat media" />
-      <button
-        class="promote-btn"
-        onclick={() => promoteToPost(message)}
-      >
-        💰 Create Paywalled Post
-      </button>
-    {/each}
-  </div>
-{/if}
 ```
 
 ---
 
-## Phase 6: Paywall Enforcement
+## Phase 6: Paywall Enforcement (Stripe Integration)
 
-### 6.1 Payment Flow
-
-```
-Viewer clicks "Unlock for $4.99"
-         │
-         ▼
-  Solana transaction via Reown AppKit (already integrated)
-         │
-         ▼
-  Frontend sends tx signature to Rails
-         │
-         ▼
-  POST /dashboard/posts/:id/purchase
-  { tx_signature: "..." }
-         │
-         ▼
-  Rails verifies transaction on-chain (optional for MVP, trusted for now)
-         │
-         ▼
-  Creates PostPurchase record
-         │
-         ▼
-  Returns signed Bunny URLs → full content renders
-```
-
-### 6.2 Purchase Controller
+### 6.1 Stripe Checkout Controller
 
 ```ruby
 # app/controllers/dashboard/purchases_controller.rb
 module Dashboard
   class PurchasesController < BaseController
     def create
-      @post = Post.find(params[:post_id])
-      
-      purchase = @post.purchases.create!(
-        user: Current.user,
-        tx_signature: params[:tx_signature],
+      post = Post.find(params[:post_id])
+
+      if post.paid_by?(Current.user)
+        return redirect_to dashboard_post_path(post), notice: "You already own access to this post."
+      end
+
+      session = Stripe::Checkout::Session.create(
+        payment_method_types: ["card"],
+        line_items: [{
+          price_data: {
+            currency: post.currency,
+            product_data: {
+              name: post.title.presence || "Paywalled Post ##{post.id}",
+              description: post.description&.truncate(100),
+            },
+            unit_amount: post.price_cents,
+          },
+          quantity: 1,
+        }],
+        mode: "payment",
+        metadata: {
+          user_id: Current.user.id,
+          post_id: post.id,
+        },
+        success_url: "#{dashboard_post_url(post)}?purchased=true",
+        cancel_url: dashboard_post_url(post),
       )
 
-      render json: {
-        success: true,
-        media_urls: @post.signed_media_urls,
-      }
+      render json: { checkout_url: session.url }
     end
   end
 end
+
 ```
 
-### 6.3 Routes
+### 6.2 Stripe Webhook Handler (Asynchronous & Verified)
 
 ```ruby
-# config/routes.rb additions
-namespace :dashboard do
-  resources :conversations, only: [:index, :show, :create] do
-    resources :messages, only: [:index, :create]
-  end
-  resources :posts do
-    resource :purchase, only: [:create], module: :dashboard
+# app/controllers/webhooks/stripe_controller.rb
+module Webhooks
+  class StripeController < ApplicationController
+    skip_before_action :verify_authenticity_token
+
+    def create
+      payload = request.body.read
+      sig_header = request.env["HTTP_STRIPE_SIGNATURE"]
+      endpoint_secret = Rails.application.credentials.stripe.webhook_secret
+
+      begin
+        event = Stripe::Webhook.construct_event(payload, sig_header, endpoint_secret)
+      rescue JSON::ParserError, Stripe::SignatureVerificationError
+        return head :bad_request
+      end
+
+      case event.type
+      when "checkout.session.completed"
+        session = event.data.object
+        fulfill_purchase(session)
+      end
+
+      head :ok
+    end
+
+    private
+
+    def fulfill_purchase(session)
+      user_id = session.metadata.user_id
+      post_id = session.metadata.post_id
+
+      PostPurchase.find_or_create_by!(
+        stripe_checkout_session_id: session.id
+      ) do |purchase|
+        purchase.user_id = user_id
+        purchase.post_id = post_id
+        purchase.stripe_payment_intent_id = session.payment_intent
+        purchase.amount_cents = session.amount_total
+        purchase.currency = session.currency
+        purchase.status = "completed"
+      end
+    end
   end
 end
 
-resources :uploads, only: [] do
-  collection do
-    post :sign
-    post :complete
-  end
-end
 ```
 
 ---
 
-## Phase 7: PWA Service Worker for Offline Shell
-
-Enable the already-scaffolded PWA routes in `config/routes.rb`:
-
-```ruby
-get "manifest" => "rails/pwa#manifest", as: :pwa_manifest
-get "service-worker" => "rails/pwa#service_worker", as: :pwa_service_worker
-```
-
-The default Rails PWA service worker will cache the app shell. Add a cache strategy for media:
+## Phase 7: Service Worker & Offline PWA Shell
 
 ```js
-// public/service-worker.js (extend the Rails-generated one)
+// public/service-worker.js
 self.addEventListener("fetch", (event) => {
   const url = new URL(event.request.url)
   
-  // Cache Bunny CDN media
   if (url.hostname === "cdn.keoscout.com") {
     event.respondWith(
       caches.match(event.request).then((cached) => {
@@ -843,91 +733,140 @@ self.addEventListener("fetch", (event) => {
     )
   }
 })
+
 ```
 
 ---
 
-## File Tree Summary
+## Phase 8: Push Notifications (Web Push)
+
+### 8.1 Push Notification Service
+
+```ruby
+# app/services/push_notification_service.rb
+class PushNotificationService
+  def self.send_message_notification(message:, recipient:)
+    return if recipient.active_conversation_id == message.conversation_id
+
+    sender_name = message.user.name || message.user.handle
+    body = if message.content.present?
+             message.content.truncate(100)
+           elsif message.attachments.any?
+             "Sent an attachment"
+           else
+             "New message"
+           end
+
+    recipient.push_subscriptions.find_each do |subscription|
+      send_web_push(
+        subscription: subscription,
+        title: sender_name,
+        body: body,
+        path: "/dashboard/conversations/#{message.conversation_id}",
+        tag: "conversation-#{message.conversation_id}"
+      )
+    rescue WebPush::InvalidSubscription, WebPush::ExpiredSubscription
+      subscription.destroy!
+    end
+  end
+
+  private
+
+  def self.send_web_push(subscription:, title:, body:, path:, tag:)
+    vapid = Rails.application.credentials.web_push
+
+    WebPush.payload_send(
+      message: JSON.generate({
+        title: title,
+        options: {
+          body: body,
+          tag: tag,
+          data: { path: path }
+        }
+      }),
+      endpoint: subscription.endpoint,
+      p256dh: subscription.p256dh_key,
+      auth: subscription.auth_key,
+      vapid: {
+        subject: vapid[:subject],
+        public_key: vapid[:vapid_public],
+        private_key: vapid[:vapid_private],
+      }
+    )
+  end
+end
 
 ```
-New/modified files:
+
+---
+
+## Complete File Tree Summary
+
+```
+New/Modified Files:
 
 app/
   models/
-    conversation.rb              # NEW
-    conversation_participant.rb   # NEW
-    message.rb                    # NEW
-    post.rb                       # NEW
-    post_purchase.rb              # NEW
+    conversation.rb
+    conversation_participant.rb
+    message.rb
+    post.rb
+    post_purchase.rb
+    push_subscription.rb
   controllers/
-    application_controller.rb     # MODIFY — add Current.user setup
-    uploads_controller.rb         # NEW
+    uploads_controller.rb
     dashboard/
-      conversations_controller.rb # NEW
-      messages_controller.rb      # NEW
-      posts_controller.rb         # MODIFY — add create/show/purchase
-      purchases_controller.rb     # NEW
+      conversations_controller.rb
+      messages_controller.rb
+      posts_controller.rb
+      purchases_controller.rb
+    webhooks/
+      stripe_controller.rb
+    push/
+      subscriptions_controller.rb
   channels/
-    chat_channel.rb               # NEW
+    chat_channel.rb
   services/
-    bunny_upload_service.rb       # NEW
-    media_blur_service.rb         # NEW
-    bunny_token_signer.rb         # NEW
+    bunny_upload_service.rb
+    bunny_token_signer.rb
+    push_notification_service.rb
   frontend/
     lib/
-      cable.ts                    # NEW — Action Cable client
-      db.ts                       # NEW — Dexie.js setup
-      upload.ts                   # NEW — Bunny direct upload
+      blur.ts
+      cable.ts
+      db.ts
+      push.ts
     stores/
-      chat.svelte.ts              # NEW — Chat rune store
-    pages/
-      dashboard/
-        conversations/
-          index.svelte            # NEW
-          show.svelte             # NEW
-        posts/
-          show.svelte             # MODIFY — paywall logic
-          new.svelte              # MODIFY — post composer
+      chat.svelte.ts
 
 config/
-  routes.rb                       # MODIFY — add chat/post/upload routes
+  routes.rb
 
 db/
   migrate/
     xxx_create_conversations.rb
+    xxx_create_conversation_participants.rb
     xxx_create_messages.rb
     xxx_create_posts.rb
     xxx_create_post_purchases.rb
+    xxx_create_push_subscriptions.rb
 
-package.json                      # MODIFY — add dexie, @rails/actioncable
+Gemfile
+
 ```
 
 ---
 
-## Implementation Order
+## Implementation Order Schedule
 
-| Priority | Phase | Why |
-|---|---|---|
-| 1 | Phase 1 — Models & Migrations | Everything depends on the data layer |
-| 2 | Phase 2 — Action Cable Chat | Core feature, can work without offline/media |
-| 3 | Phase 4 — Bunny Uploads | Media is needed before Phase 5 |
-| 4 | Phase 3 — Offline (Dexie) | Add offline after core chat works |
-| 5 | Phase 5 — Promote to Post | Depends on media being stored |
-| 6 | Phase 6 — Paywall | Depends on posts existing |
-| 7 | Phase 7 — PWA | Polish; can be done in parallel with Phase 5–6 |
+| Priority | Phase | Scope |
+| --- | --- | --- |
+| **1** | Phase 1 — Models & Database Migrations | Basic data structural foundation |
+| **2** | Phase 2 — Real-time Action Cable Chat | Core socket chat system |
+| **3** | Phase 4 — Bunny Direct Uploads & Client Blurring | Media handling pipeline |
+| **4** | Phase 3 — Offline Dexie IndexedDB Queue | Offline message persistence |
+| **5** | Phase 8 — Web Push Notifications | Remote background user updates |
+| **6** | Phase 5 — Promote Message to Post Action | Post creation from media |
+| **7** | Phase 6 — Stripe Paywall Checkout & Webhooks | Payment processing & lock verification |
+| **8** | Phase 7 — PWA Shell & Asset Cache | Offline shell caching |
 
----
-
-## Key Design Decisions
-
-1. **Media stored once, referenced twice** — No duplication between messages and posts. Both point to the same Bunny URLs.
-
-2. **Blur is irreversible** — 400px downscale + σ=50 Gaussian blur + JPEG quality 10. Recovery is information-theoretically impossible, not just hard.
-
-3. **Video preview is a single blurred frame** — Never serve a blurred video stream. Motion patterns in blurred video still leak information.
-
-4. **Originals require token auth** — Bunny Zone Token Authentication means the original URL returns 403 unless signed. Rails only signs URLs after verifying payment.
-
-5. **Optimistic chat with offline queue** — Messages appear instantly in UI, synced to server when connectivity allows. Pending messages stored in IndexedDB.
-
-6. **IndexedDB as cache, not source of truth** — Server is authoritative. IndexedDB provides offline read access and pending write queue.

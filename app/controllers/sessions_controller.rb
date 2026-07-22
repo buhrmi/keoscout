@@ -15,11 +15,10 @@ class SessionsController < ApplicationController
     user = User.authenticate_by(login_params)
     if user
       session[:user_id] = user.id
-      flash[:frame] = "_top"
-      redirect_to dashboard_root_path, notice: "Signed in successfully."
+      redirect_to dashboard_root_path, notice: "Signed in successfully.", inertia: { frame: "_top" }
     else
       flash[:alert] = "Invalid email or password."
-      redirect_to new_session_path
+      redirect_back fallback_location: new_session_path
     end
   end
 
