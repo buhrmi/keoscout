@@ -13,8 +13,6 @@ export function signup() {
 }
 
 export function authenticate(provider) {
-  if (import.meta.env.MODE == 'production') return alert("Coming soon")
-  
   const width = 500;
   const height = 600;
   const left = (screen.width - width) / 2;
