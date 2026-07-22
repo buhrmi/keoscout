@@ -25,16 +25,17 @@ class SessionsController < ApplicationController
 
   def create_from_omniauth
     auth = request.env["omniauth.auth"]
+    scout = User.find_by(id: session[:scout_id]) if session[:scout_id].present?
 
     # Only allow new signups via invitation
-    unless Identity.exists?(provider: auth.provider, provider_id: auth.uid) || session[:scout_id].present?
+    unless Identity.exists?(provider: auth.provider, provider_id: auth.uid) || scout.present?
       flash[:alert] = "An invitation is required to sign up."
       render layout: false
       return
     end
 
     Current.user = Identity.from_omniauth!(auth,
-      scout_id: session[:scout_id],
+      scout_id: scout&.id,
       share_percentage: cookies[:share_percentage]
     ).user
 
