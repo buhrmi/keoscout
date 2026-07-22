@@ -30,8 +30,6 @@ $effect(() => $currentUser = current_user)
         <p>
           <a href="/session" data-method="delete">Log out</a>
         </p>
-      {:else}
-        <button onclick={login}>Log in</button>
       {/if}
     </menu>
   </header>

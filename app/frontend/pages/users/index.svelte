@@ -2,7 +2,7 @@
   import { Tween } from 'svelte/motion';
   import { cubicOut } from 'svelte/easing';
   import { slide } from 'svelte/transition';
-  import { signup } from '~/lib/auth.js'
+  import { signup, login } from '~/lib/auth.js'
 
   const { referrer, host } = $props()
   let percentage = new Tween(15, {
@@ -65,9 +65,10 @@
       Create account
     </button>
   {:else}
-    <div class="card mt-4">
+    <div class="card mb-4">
       KeoScout is currently invite-only.
     </div>
+    <button onclick={login} class="btn primary">I have an account, let me in!</button>
   {/if}
   </section>
 </main>

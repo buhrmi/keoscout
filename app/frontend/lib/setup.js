@@ -30,6 +30,7 @@ window.addEventListener("popstate", () => {
 
 // add the loader class to all .btn elements when they are clicked
 document.addEventListener("click", (ev) => {
+  document.querySelectorAll(".loader").forEach(el => el.classList.remove("loader"))
   const btn = ev.target.closest(".btn")
   if (btn) {
     btn.classList.add("loader")

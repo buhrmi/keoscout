@@ -198,19 +198,25 @@ h3 {
     inset 0 1px 3px rgba(0, 0, 0, 0.4);
 }
 
-/* Outline — transparent with gray border */
-.btn.outline {
+/* Secondary — transparent with gray border */
+.btn.secondary {
   color: #bbbbbb;
   background: transparent;
-  border: 1px solid #888;
+  border: 1px solid var(--color-border);
 }
 
-.btn.outline:hover {
+.btn.secondary:hover {
   background: rgba(167, 167, 167, 0.215);
 }
 
-.btn.outline:active {
+.btn.secondary:active {
   opacity: 0.8;
+}
+
+.btn.small {
+  padding: 8px 16px;
+  font-size: 14px;
+  /* border: 0px solid #888; */
 }
 
 .action {

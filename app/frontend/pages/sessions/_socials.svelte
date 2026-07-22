@@ -3,7 +3,8 @@
 </script>
 
 <div class="divider">or</div>
-<button class="btn outline" onclick={() => authenticate('zalo')}>
+<button class="btn secondary" onclick={() => authenticate('zalo')}>
+  <img src={"/vendor/zalo.svg"} alt="Zalo" class="h-6"/>
   Continue with Zalo
 </button>
 
