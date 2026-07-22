@@ -10,9 +10,9 @@
         "@sveltejs/vite-plugin-svelte": "^7.2.0",
         "@unocss/preset-icons": "^66.7.5",
         "@unocss/reset": "^66.7.5",
-        "inertiax-svelte": "^11.0.41",
+        "inertiax-svelte": "^11.0.43",
         "inertiax-ui": "^0.0.25",
-        "inertiax-vite": "^11.0.40",
+        "inertiax-vite": "^11.0.43",
         "svelte": "^5.56.7",
         "svelte-preprocess-import-assets": "^1.1.0",
         "svelte-sonner": "^1.1.1",
@@ -535,13 +535,13 @@
 
     "import-meta-resolve": ["import-meta-resolve@4.2.0", "", {}, "sha512-Iqv2fzaTQN28s/FwZAoFq0ZSs/7hMAHJVX+w8PZl3cY19Pxk6jFFalxQoIfW2826i/fDLXv8IiEZRIT0lDuWcg=="],
 
-    "inertiax-core": ["inertiax-core@11.0.42", "", { "dependencies": { "@jridgewell/trace-mapping": "^0.3.31", "es-toolkit": "^1.49.0", "laravel-precognition": "^2.0.0" }, "peerDependencies": { "axios": "^1.15.2" }, "optionalPeers": ["axios"] }, "sha512-t8esPNx1MATg3yQ2ADHfIBmrlCch8MUMbBdgkeHrr9fJw4vf4NYKzBNYFygUCZIeOFpWtmRc2WMDFuslt8kMhA=="],
+    "inertiax-core": ["inertiax-core@11.0.43", "", { "dependencies": { "@jridgewell/trace-mapping": "^0.3.31", "es-toolkit": "^1.49.0", "laravel-precognition": "^2.0.0" }, "peerDependencies": { "axios": "^1.15.2" }, "optionalPeers": ["axios"] }, "sha512-rQDV7HbsmBoPRwKw2Q4YT8IAPiAfJMKFSO0nuwqkJ24bLlZmXk7GcIIWWCiS7Z6KJPhYI4+nOyPyypwZEF54FA=="],
 
-    "inertiax-svelte": ["inertiax-svelte@11.0.42", "", { "dependencies": { "es-toolkit": "^1.49.0", "inertiax-core": "11.0.42", "laravel-precognition": "^2.0.0" }, "peerDependencies": { "svelte": "^5.0.0" } }, "sha512-3il5SZ11A/McsP0fsIAHXcYwd9zu5bwLwEIxg8zTeZYVZMymyzJ/Crc13xYyHm24KmcvCCGKLShIOsnHUhy5aw=="],
+    "inertiax-svelte": ["inertiax-svelte@11.0.43", "", { "dependencies": { "es-toolkit": "^1.49.0", "inertiax-core": "11.0.43", "laravel-precognition": "^2.0.0" }, "peerDependencies": { "svelte": "^5.0.0" } }, "sha512-J5wK4OB1jJnG+PalMaFGBkrpuPFC8cpJ1BnMiWs/9OekN+6aGwB2LiiK9qeTz/+3OjQf3Sx4xSajlsSjM5w5+A=="],
 
     "inertiax-ui": ["inertiax-ui@0.0.25", "", { "dependencies": { "esm-env": "^1.2.2" }, "peerDependencies": { "inertiax-svelte": "^11.0.18", "svelte": "^5.0.0" } }, "sha512-jURSxBF3tQpAfP6Xl22xLLAOi4/1CDb+Aa/AyDPMInsV91HxhhjiVEtWTU/Uorr4XR7yue67Gf0crNGGiAAFWw=="],
 
-    "inertiax-vite": ["inertiax-vite@11.0.42", "", { "dependencies": { "inertiax-core": "11.0.42", "tinyglobby": "^0.2.17" }, "peerDependencies": { "vite": "^7.0.0 || ^8.0.0" } }, "sha512-I/J/P3pkK5O1+oTzMd9W0q7xVDLeZldYUF9aPYc+9v2wjhiVTE4CoEPQB9u6SM/z+4SMXJ7NV4u5X7aEyDh5sw=="],
+    "inertiax-vite": ["inertiax-vite@11.0.43", "", { "dependencies": { "inertiax-core": "11.0.43", "tinyglobby": "^0.2.17" }, "peerDependencies": { "vite": "^7.0.0 || ^8.0.0" } }, "sha512-/QYygUCTe7k2nj+so6kfCAA+CYQzMe7OLdbiOKhKCrmYgcOJ+mIZP+Nf6d0+Yz8iSn4bLdakN/0cE20eIVMUng=="],
 
     "iron-webcrypto": ["iron-webcrypto@1.2.1", "", {}, "sha512-feOM6FaSr6rEABp/eDfVseKyTMDt+KGpeB35SkVn9Tyn0CqvVsY3EwI0v5i8nMHyJnzCIQf7nsy3p41TPkJZhg=="],
 
