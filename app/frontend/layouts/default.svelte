@@ -16,18 +16,55 @@
 </svelte:head>
 
 <div class="layout">
-  <header>
+  <div class="sidebar">
+    <header>
+      
+      <a href="/" class="logo">
+        <img src="~/assets/logo.png" alt="Keo" class="h-12"/>
+      </a>
+    </header>
     
-    <a href="/" class="logo">
-      <img src="~/assets/logo.png" alt="Keo" class="h-12"/>
-    </a>
     {#if $currentUser}
-      <p>
-        <a href="/session" data-method="delete">Log out</a>
-      </p>
+      <nav>
+
+
+        <a href="/dashboard" class="action">
+          <div class="btn-circle">
+            <div class="i-mdi:home text-2xl"></div>
+          </div>
+          <p>
+            Home
+          </p>
+        </a>
+
+        <a use:modal href="/dashboard/posts/new" class="action">
+          <div class="btn-circle">
+            <div class="i-mdi:plus text-2xl"></div>
+          </div>
+          <p>
+            New Post
+          </p>
+        </a>
+
+        <a href="/dashboard/friends" class="action">
+          <div class="btn-circle">
+            <div class="i-mdi:account-group text-2xl"></div>
+          </div>
+          <p>
+            Friends
+          </p>
+        </a>
+
+
+      </nav>
+
+      <menu>
+        <p>
+          <a href="/session" data-method="delete">Log out</a>
+        </p>
+      </menu>
     {/if}
-  
-  </header>
+  </div>
   
   {@render children()}
   
@@ -40,41 +77,6 @@
         </p>
       </section>
     </footer>
-  {/if}
-
-  {#if $currentUser}
-    <nav>
-
-
-      <a href="/dashboard" class="action">
-        <div class="btn-circle">
-          <div class="i-mdi:home text-2xl"></div>
-        </div>
-        <p>
-          Home
-        </p>
-      </a>
-
-      <a use:modal href="/dashboard/posts/new" class="action">
-        <div class="btn-circle">
-          <div class="i-mdi:plus text-2xl"></div>
-        </div>
-        <p>
-          New Post
-        </p>
-      </a>
-
-      <a href="/dashboard/friends" class="action">
-        <div class="btn-circle">
-          <div class="i-mdi:account-group text-2xl"></div>
-        </div>
-        <p>
-          Friends
-        </p>
-      </a>
-
-
-    </nav>
   {/if}
 </div>
 
@@ -90,17 +92,27 @@
       flex-direction: column;
       justify-content: start;
       align-items: start;
+      flex: 1;
     }
   }
 
-  header {
+  header, menu {
     border-bottom: 1px solid var(--color-border);
     padding: var(--padding);
     background: #0003;
     backdrop-filter: blur(10px);
     display: flex;
-    justify-content: space-between;
-    
+    justify-content: center;
+  }
+  
+  menu {
+    display: flex;
+    justify-content: end;
+    align-items: center;
+    @media (min-width: 600px) {
+      border-bottom: none;
+      justify-content: center;
+    }
   }
 
   .action {
