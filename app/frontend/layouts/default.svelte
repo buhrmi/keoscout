@@ -1,19 +1,14 @@
 <script>
-import { modal } from 'inertiax-ui'
-import { Toaster } from 'svelte-sonner'
-import '~/assets//modal.css'
-import { currentUser } from '~/stores/user.svelte.js'
-import { login } from '~/lib/auth.js'
+  import { modal } from 'inertiax-ui'
+  import { Toaster } from 'svelte-sonner'
+  import '~/assets//modal.css'
+  import { currentUser } from '~/stores/user.svelte.js'
 
-const {
-  current_user,
-  footer = true,
-  referrer,
-  children
-} = $props()
-
-$effect(() => $currentUser = current_user)
-
+  const {
+    footer = true,
+    referrer,
+    children
+  } = $props()
 </script>
 
 <svelte:head>
@@ -26,7 +21,7 @@ $effect(() => $currentUser = current_user)
       <a href="/" class="logo">
         <img src="~/assets/logo.png" alt="Keo" class="h-12"/>
       </a>
-      {#if current_user}
+      {#if $currentUser}
         <p>
           <a href="/session" data-method="delete">Log out</a>
         </p>
@@ -47,7 +42,7 @@ $effect(() => $currentUser = current_user)
     </footer>
   {/if}
 
-  {#if current_user}
+  {#if $currentUser}
     <nav>
       <menu>
         <li>
