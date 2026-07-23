@@ -17,16 +17,16 @@
 
 <div class="layout">
   <header>
-    <menu>
-      <a href="/" class="logo">
-        <img src="~/assets/logo.png" alt="Keo" class="h-12"/>
-      </a>
-      {#if $currentUser}
-        <p>
-          <a href="/session" data-method="delete">Log out</a>
-        </p>
-      {/if}
-    </menu>
+    
+    <a href="/" class="logo">
+      <img src="~/assets/logo.png" alt="Keo" class="h-12"/>
+    </a>
+    {#if $currentUser}
+      <p>
+        <a href="/session" data-method="delete">Log out</a>
+      </p>
+    {/if}
+  
   </header>
   
   {@render children()}
@@ -44,38 +44,36 @@
 
   {#if $currentUser}
     <nav>
-      <menu>
-        <li>
-          <a href="/dashboard" class="action">
-            <div class="btn-circle">
-              <div class="i-mdi:home text-2xl"></div>
-            </div>
-            <p>
-              Home
-            </p>
-          </a>
-        </li>
-        <li>
-          <a use:modal href="/dashboard/posts/new" class="action">
-            <div class="btn-circle">
-              <div class="i-mdi:plus text-2xl"></div>
-            </div>
-            <p>
-              New Post
-            </p>
-          </a>
-        </li>
-        <li>
-          <a href="/dashboard/friends" class="action">
-            <div class="btn-circle">
-              <div class="i-mdi:account-group text-2xl"></div>
-            </div>
-            <p>
-              Friends
-            </p>
-          </a>
-        </li>
-      </menu>
+
+
+      <a href="/dashboard" class="action">
+        <div class="btn-circle">
+          <div class="i-mdi:home text-2xl"></div>
+        </div>
+        <p>
+          Home
+        </p>
+      </a>
+
+      <a use:modal href="/dashboard/posts/new" class="action">
+        <div class="btn-circle">
+          <div class="i-mdi:plus text-2xl"></div>
+        </div>
+        <p>
+          New Post
+        </p>
+      </a>
+
+      <a href="/dashboard/friends" class="action">
+        <div class="btn-circle">
+          <div class="i-mdi:account-group text-2xl"></div>
+        </div>
+        <p>
+          Friends
+        </p>
+      </a>
+
+
     </nav>
   {/if}
 </div>
@@ -83,11 +81,16 @@
 <Toaster theme="dark" richColors position="top-right" />
 
 <style>
-  nav menu {
+  nav {
     display: flex;
     justify-content: space-around;
     gap: 1rem;
-    padding: 0.5rem;
+    padding: var(--padding);
+    @media (min-width: 600px) {
+      flex-direction: column;
+      justify-content: start;
+      align-items: start;
+    }
   }
 
   header {
@@ -95,11 +98,24 @@
     padding: var(--padding);
     background: #0003;
     backdrop-filter: blur(10px);
-    menu {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-    }
+    display: flex;
+    justify-content: space-between;
+    
+  }
 
+  .action {
+    font-weight: normal;
+    display: inline-flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+
+    p {
+      font-size: 0.75rem;
+    }
+    @media (min-width: 600px) {
+      flex-direction: row;
+      gap: 0.5rem;
+    }
   }
 </style>

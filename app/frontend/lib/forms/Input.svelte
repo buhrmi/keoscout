@@ -14,5 +14,5 @@
       <span class="error">{error}</span>
     {/if}
   </label>
-  <input name={name} placeholder="" onfocus={() => error = null} {...rest}/>
+  <input {name} placeholder="" onfocus={() => errors[name] = null} {...rest}/>
 </div>
