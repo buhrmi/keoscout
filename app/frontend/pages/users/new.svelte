@@ -18,8 +18,8 @@
     </p>
     <Form action="/users" method="post" options={{frame: "_top"}}>
       {#snippet children({ errors })}
-        <Input name="user.email" label="Email" {errors} />
-        <Input name="user.password" label="Password" type="password" {errors} />
+        <Input name="email" label="Email" {errors} />
+        <Input name="password" label="Password" type="password" {errors} />
         <button class="btn primary w-full" type="submit">
           Create account
         </button>

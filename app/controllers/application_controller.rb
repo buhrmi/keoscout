@@ -13,9 +13,8 @@ class ApplicationController < ActionController::Base
   rescue_from ActiveRecord::RecordInvalid do |exception|
     raise exception unless request.inertia?
 
-    model_key = exception.record.model_name.singular
     redirect_back inertia: {
-      errors: exception.record.errors.to_hash.transform_keys { |attr| :"#{model_key}.#{attr}" }
+      errors: exception.record.errors
     }
   end
 

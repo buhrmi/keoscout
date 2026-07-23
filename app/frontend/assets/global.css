@@ -50,27 +50,15 @@ body {
 
   @media (min-width: 600px) {
     grid-template-columns: 200px 1fr;
-    grid-template-rows: 1fr auto;
-    grid-template-areas: "sidebar main"
+    grid-template-rows: auto 1fr auto;
+    grid-template-areas: "header header"
+                         "sidebar main"
                          "sidebar footer";
 
     main, footer {
       border-left: 1px solid #333;
     }
                          
-  }
-}
-
-.sidebar {
-  display: contents;
-  @media (min-width: 600px) {
-    display: flex;
-    flex-direction: column;
-    grid-area: sidebar;
-    position: sticky;
-    top: 0;
-    height: 100dvh;
-    overflow-y: auto;
   }
 }
 
@@ -92,12 +80,6 @@ nav {
 
 menu {
   grid-area: menu;
-}
-
-.layout nav {
-  position: sticky;
-  bottom: 0;
-  background: linear-gradient(to top, #000000, transparent);
 }
 
 header > section,

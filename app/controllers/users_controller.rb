@@ -1,6 +1,8 @@
 # frozen_string_literal: true
 
 class UsersController < InertiaController
+  wrap_parameters include: [ :email, :password ]
+
   def index
     redirect_to "/dashboard" if Current.user
   end

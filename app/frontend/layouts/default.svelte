@@ -9,20 +9,21 @@
     referrer,
     children
   } = $props()
+
+  let headerHeight = $state(0)
 </script>
 
 <svelte:head>
   <title>KeoScout</title>
 </svelte:head>
 
-<div class="layout">
+<div class="layout" style="--headerHeight: {headerHeight}px">
+  <header bind:clientHeight={headerHeight}>
+    <a href="/" class="logo">
+      <img src="~/assets/logo.png" alt="Keo" class="h-12"/>
+    </a>
+  </header>
   <div class="sidebar">
-    <header>
-      
-      <a href="/" class="logo">
-        <img src="~/assets/logo.png" alt="Keo" class="h-12"/>
-      </a>
-    </header>
     
     {#if $currentUser}
       <nav>
@@ -88,11 +89,16 @@
     justify-content: space-around;
     gap: 1rem;
     padding: var(--padding);
+    position: sticky;
+    bottom: 0;
+    background: linear-gradient(to top, #000000, transparent);
+    z-index: 1;
     @media (min-width: 600px) {
       flex-direction: column;
       justify-content: start;
       align-items: start;
       flex: 1;
+      background: #0003;
     }
   }
 
@@ -102,7 +108,9 @@
     background: #0003;
     backdrop-filter: blur(10px);
     display: flex;
-    justify-content: center;
+    justify-content: start;
+    position: sticky;
+    top: 0;
   }
   
   menu {
@@ -130,4 +138,18 @@
       gap: 0.5rem;
     }
   }
+
+  .sidebar {
+    display: contents;
+    @media (min-width: 600px) {
+      display: flex;
+      flex-direction: column;
+      grid-area: sidebar;
+      position: sticky;
+      top: var(--headerHeight);
+      height: calc(100dvh - var(--headerHeight));
+      overflow-y: auto;
+    }
+  }
+
 </style>
