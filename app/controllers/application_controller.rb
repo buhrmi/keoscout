@@ -5,6 +5,8 @@ class ApplicationController < ActionController::Base
   before_action :set_current_url_options
   before_action :redirect_authenticated_user
   before_action :save_scout_id
+  before_action :set_inertia_frame_header
+
 
   use_inertia_instance_props
 
@@ -31,6 +33,19 @@ class ApplicationController < ActionController::Base
   end
 
   private
+
+  def set_inertia_frame_header
+    response["X-Inertia-Frame"] = session.delete(:inertia_frame) if session[:inertia_frame]
+  end
+
+  def redirect_back(**options)
+    if inertia_referer = request.headers["X-Inertia-Referer"]
+      session[:inertia_frame] = request.headers["X-Inertia-Frame"]
+      redirect_to inertia_referer, **options
+    else
+      super
+    end
+  end
 
   def set_current_user
     Current.user = User.find_by(id: session[:user_id]) if session[:user_id]
