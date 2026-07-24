@@ -13,7 +13,7 @@ body {
 
 #app {
   display: grid;
-  grid-template-columns: 1fr minmax(0, 800px) 1fr;
+  grid-template-columns: auto minmax(0, 800px) auto;
   min-height: 100dvh;
 }
 
@@ -49,7 +49,8 @@ menu {
 }
 
 
-section {
+main section,
+footer section {
   display: grid;
   grid-template-columns: var(--padding) auto var(--padding);
   border-bottom: 1px solid #444;
