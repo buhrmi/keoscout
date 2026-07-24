@@ -28,40 +28,6 @@ body {
 #app::before { grid-column: 1; grid-row: 1; }
 #app::after  { grid-column: 3; grid-row: 1; }
 
-#app > .layout {
-  grid-column: 2;
-  grid-row: 1;
-  min-height: 100dvh;
-  @media (min-width: 600px) {
-    border-right: 1px solid #333;
-    border-left: 1px solid #333;
-  }
-}
-
-.layout {
-  display: grid;
-  width: 100%;
-  grid-template-rows: auto 1fr auto auto;
-  grid-template-columns: 1fr auto;
-  grid-template-areas: "header menu"
-                       "main main"
-                       "footer footer"
-                       "nav nav";
-
-  @media (min-width: 600px) {
-    grid-template-columns: 200px 1fr;
-    grid-template-rows: auto 1fr auto;
-    grid-template-areas: "header header"
-                         "sidebar main"
-                         "sidebar footer";
-
-    main, footer {
-      border-left: 1px solid #333;
-    }
-                         
-  }
-}
-
 main {
   grid-area: main;
 }
@@ -82,10 +48,8 @@ menu {
   grid-area: menu;
 }
 
-header > section,
-main > section,
-footer > section,
-nav > section {
+
+section {
   display: grid;
   grid-template-columns: var(--padding) auto var(--padding);
   border-bottom: 1px solid #444;
@@ -238,6 +202,27 @@ h3 {
   display: inline-flex;
   align-items: center;
   justify-content: center;
+}
+
+
+.divider {
+  display: grid;
+  grid-template-columns: 1fr auto 1fr;
+  align-items: center;
+  gap: 1rem;
+  margin: 1rem 0;
+  color: #888;
+  &:empty {
+    background: var(--color-border);
+  }
+}
+
+.divider::before,
+.divider::after {
+  content: '';
+  display: block;
+  height: 1px;
+  background: var(--color-border);
 }
 
 /* -- Form elements -- */

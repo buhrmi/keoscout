@@ -84,6 +84,36 @@
 <Toaster theme="dark" richColors position="top-right" />
 
 <style>
+
+.layout {
+  grid-column: 2;
+  grid-row: 1;
+  min-height: 100dvh;
+  display: grid;
+  width: 100%;
+  grid-template-rows: auto 1fr auto auto;
+  grid-template-columns: 1fr auto;
+  grid-template-areas: "header menu"
+                       "main main"
+                       "footer footer"
+                       "nav nav";
+
+  @media (min-width: 600px) {
+    border-right: 1px solid #333;
+    border-left: 1px solid #333;
+    grid-template-columns: 200px 1fr;
+    grid-template-rows: auto 1fr auto;
+    grid-template-areas: "header header"
+                         "sidebar main"
+                         "sidebar footer";
+
+    main, footer {
+      border-left: 1px solid #333;
+    }
+                         
+  }
+}
+
   nav {
     display: flex;
     justify-content: space-around;
@@ -146,6 +176,7 @@
       flex-direction: column;
       grid-area: sidebar;
       position: sticky;
+        border-right: 1px solid #333;
       top: var(--headerHeight);
       height: calc(100dvh - var(--headerHeight));
       overflow-y: auto;

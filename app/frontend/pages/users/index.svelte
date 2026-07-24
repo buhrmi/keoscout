@@ -52,13 +52,14 @@
       </label>
     </div>
     {#if percentage.target > 0}
-      <section transition:slide>
-        <div class="flex">
-          <p class="flex-1">Revenue share</p>
-          <p>{percentage.target}%</p>
+      <div transition:slide>
+        <div class="divider"></div>
+          <div class="flex">
+            <p class="flex-1">Revenue share</p>
+            <p>{percentage.target}%</p>
+          </div>
+          <input type="range" min="1" max="100" value={percentage.current} oninput={(e) => percentage.set(parseInt(e.target.value), {duration: 0})} class="w-full mt-2"/>
         </div>
-        <input type="range" min="1" max="100" value={percentage.current} oninput={(e) => percentage.set(parseInt(e.target.value), {duration: 0})} class="w-full mt-2"/>
-      </section>
       {/if}
     </div>
     <button onclick={signup} class="btn primary mt-8 mb-2">
